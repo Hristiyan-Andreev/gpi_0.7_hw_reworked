@@ -21,8 +21,9 @@ class TimeMeasure():
     def end_measure(self):
         self.end_time = time.time() - self.start_time
 
-    def print_measure(self, msg = "Time measured: "):
-        print(msg + str(self.end_time))
+    def print_measure(self, msg = "Time measured"):
+        print('{}: {}'.format(msg,str(self.end_time)))
+        # print(msg + str(self.end_time))
 
 
 # GPI to Stream class with more information
