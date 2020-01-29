@@ -36,48 +36,58 @@ for GPI in list(cf.gpi2stream):
 
 # Define callbacks
 
-# Start cue on Falling edge and Stop Cue on Rising edge
-def start_stop_avail(gpi):
-    # Start measuring the reaction time between getting GPIO input and getting response from Elemental server
+# When falling edge detected -> Start ad avail
+def start_avail(gpi):
+    global splice_counter
     reaction_time.start_measure()
-
-    global splice_counter                   # Use for counting splices
-    edge = GPIO.input(gpi)                  # Read if rising or falling edge
     stream = gpi_stream_dict[gpi]           # Make a copy of the dict object, for better perfomance
+    print('--------------------------------------------\n')
+    print('1. Rising edge detected\n')
+
+    # Check if the stream is already in a cue and return if so
+    if stream.in_cue:
+        print('2. NO ACTION: Stream is already in cue\n')
+        return 1
     
-    print("1. {} Event detcted".format(edge))
-    print("2. Stream is in cue: {}".format(stream.in_cue))
-              
-    # Falling edge detected and Stream is NOT in Cue => Start cue
-    if not edge and not stream.in_cue:
-        response = stream.start_cue(elemental_api.start_cue)
-        # print(response)
-        
-        reaction_time.end_measure()
-        splice_counter += 1
-        print('Splice count:{}\n'.format(splice_counter))
-        reaction_time.print_measure()
-        
+    response = stream.start_cue(elemental_api.start_cue)
+    reaction_time.end_measure()
 
-        gpi_stream_dict[gpi].update_info(stream)    # Update the actual object in the stream dict
-        #time.sleep(cf.wait_time)                    # Sleeps the thread for all GPIO inputs - not good
 
-    # Rising edge detected and Stream is in Cue => Stop cue
-    elif edge and stream.in_cue:        
-        response = stream.stop_cue(elemental_api.stop_cue)
-        # print(response)
-        
-        reaction_time.end_measure()
-        reaction_time.print_measure()        
-        
-        gpi_stream_dict[gpi].update_info(stream)    # Update the actual object in the stream dict       
-        #time.sleep(cf.wait_time)                    # Sleeps the thread for all GPIO inputs - not good
-        
+    #TODO: Check the status code of the response    
+    splice_counter += 1
+    print('2. AD STARTED: Splice count:{}\n'.format(splice_counter))
+    reaction_time.print_measure()    
+    print('--------------------------------------------\n')
+
+    gpi_stream_dict[gpi].update_info(stream)    # Update the actual object in the stream dict    
+    
+
+# When rising edge detected -> Stop ad avail
+def stop_avail(gpi):
+    global splice_counter
+    reaction_time.start_measure()
+    stream = gpi_stream_dict[gpi]           # Make a copy of the dict object, for better perfomance
+
+    if stream.in_cue is False:
+        print('2. NO ACTION: Stream is not in cue\n')
+        return 1
+
+    response = stream.stop_cue(elemental_api.stop_cue)    
+    reaction_time.end_measure()
+
+    print('2. AD STOPPED: Splice count:{}\n'.format(splice_counter))
+    reaction_time.print_measure()        
+    print('--------------------------------------------\n')
+    
+    gpi_stream_dict[gpi].update_info(stream)    # Update the actual object in the stream dict       
+    
 
 # Tie callbacks to events
 for GPI in list(cf.gpi2stream):
-    #GPIO.add_event_detect( GPI, GPIO.BOTH, callback = start_stop_avail, bouncetime = cf.wait_time*1000)
-    GPIO.add_event_detect( GPI, GPIO.BOTH, callback = start_stop_avail)
+    # GPIO.add_event_detect( GPI, GPIO.BOTH, callback = start_stop_avail, bouncetime = cf.wait_time*1000)
+    # GPIO.add_event_detect( GPI, GPIO.BOTH, callback = start_stop_avail)
+    GPIO.add_event_detect( GPI, GPIO.FALLING, callback = start_avail)
+    GPIO.add_event_detect( GPI, GPIO.RISING, callback = stop_avail)
 
 @app.route('/')
 def index():
