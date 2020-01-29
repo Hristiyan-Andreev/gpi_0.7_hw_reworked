@@ -38,10 +38,13 @@ for GPI in list(cf.gpi2stream):
 
 # Start cue on Falling edge and Stop Cue on Rising edge
 def start_stop_avail(gpi):
+    # Start measuring the reaction time between getting GPIO input and getting response from Elemental server
     reaction_time.start_measure()
-    global splice_counter
-    edge = GPIO.input(gpi)
+
+    global splice_counter                   # Use for counting splices
+    edge = GPIO.input(gpi)                  # Read if rising or falling edge
     stream = gpi_stream_dict[gpi]           # Make a copy of the dict object, for better perfomance
+    
     print("1. {} Event detcted".format(edge))
     print("2. Stream is in cue: {}".format(stream.in_cue))
               
