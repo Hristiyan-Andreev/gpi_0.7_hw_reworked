@@ -3,13 +3,14 @@ import time
 import RPi.GPIO as GPIO
 from flask import Flask
 from helpers import TimeMeasure, GpiStream
+import elemental_api_class as liveapi
 
 
 # sys.path.append('/home/pi/config')
 import config as cf
 
-
-reaction_time = TimeMeasure()        
+reaction_time = TimeMeasure()
+splice_counter = 0
 
 # Configure the web app (needed only for autorestart)
 app = Flask(__name__)
@@ -19,6 +20,10 @@ app.config.from_object(cf.FlaskConfig)
 gpi_stream_dict = {}
 for gpi, id in cf.gpi2stream.items():
     gpi_stream_dict[gpi] = GpiStream(id)
+
+# Set-up Elemental API class
+elemental_api = liveapi.Elemental_api(cf.elemental_ip)
+elemental_api.gen_cue_part_url()
 
 
 # Setup GPIO inputs/outputs
@@ -34,31 +39,35 @@ for GPI in list(cf.gpi2stream):
 # Start cue on Falling edge and Stop Cue on Rising edge
 def start_stop_avail(gpi):
     reaction_time.start_measure()
+    global splice_counter
     edge = GPIO.input(gpi)
     stream = gpi_stream_dict[gpi]           # Make a copy of the dict object, for better perfomance
     print("1. {} Event detcted".format(edge))
     print("2. Stream is in cue: {}".format(stream.in_cue))
-    
-    # Rising edge detected and Stream is in Cue => Stop cue
-    if edge and stream.in_cue:        
-        response = stream.stop_cue()
-        print(response)
+              
+    # Falling edge detected and Stream is NOT in Cue => Start cue
+    if not edge and not stream.in_cue:
+        response = stream.start_cue(elemental_api.start_cue)
+        # print(response)
         
         reaction_time.end_measure()
+        splice_counter += 1
+        print('Splice count:{}\n'.format(splice_counter))
         reaction_time.print_measure()
+        
+
+        gpi_stream_dict[gpi].update_info(stream)    # Update the actual object in the stream dict
+        #time.sleep(cf.wait_time)                    # Sleeps the thread for all GPIO inputs - not good
+
+    # Rising edge detected and Stream is in Cue => Stop cue
+    elif edge and stream.in_cue:        
+        response = stream.stop_cue(elemental_api.stop_cue)
+        # print(response)
+        
+        reaction_time.end_measure()
+        reaction_time.print_measure()        
         
         gpi_stream_dict[gpi].update_info(stream)    # Update the actual object in the stream dict       
-        #time.sleep(cf.wait_time)                    # Sleeps the thread for all GPIO inputs - not good
-        
-    # Falling edge detected and Stream is NOT in Cue => Start cue
-    elif not edge and not stream.in_cue:
-        response = stream.start_cue()
-        print(response)
-        
-        reaction_time.end_measure()
-        reaction_time.print_measure()
-        
-        gpi_stream_dict[gpi].update_info(stream)    # Update the actual object in the stream dict
         #time.sleep(cf.wait_time)                    # Sleeps the thread for all GPIO inputs - not good
         
 

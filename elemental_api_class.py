@@ -3,12 +3,11 @@ import dicttoxml
 import ijson
 import time
 
-myheaders = {'Accept': 'application/xml', 'Content-type': 'application/xml'}
 
 class Elemental_api():
 	def __init__(self, elemetnal_ip):
 		self.elemental_ip = elemetnal_ip
-		self.headers = myheaders
+		self.headers = {'Accept': 'application/xml', 'Content-type': 'application/xml'}
 		self.cue_part_url = ''
 
 	def list_live_events(self):
@@ -59,7 +58,7 @@ class Elemental_api():
 		url = '{}{}/cue_point/'.format(self.cue_part_url, stream_id)
 		body = '<cue_point><event_id>{}</event_id><splice_offset>0</splice_offset><duration>0</duration></cue_point>'.format(stream_id)
 		
-		response = req.post(self.start_cue_url, headers = self.headers, data = body)
+		response = req.post(url, headers = self.headers, data = body)
 		return response.text
 
 	def stop_cue(self, stream_id):
@@ -67,7 +66,7 @@ class Elemental_api():
 		url = '{}{}/cue_point/'.format(self.cue_part_url, stream_id)
 		body = '<cue_point><event_id>{}</event_id><return_offset>0</return_offset></cue_point>'.format(stream_id)
 
-		response = req.post(self.url, headers = self.headers, data = body)
+		response = req.post(url, headers = self.headers, data = body)
 		return response.text
 
 

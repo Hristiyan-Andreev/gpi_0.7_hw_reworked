@@ -12,11 +12,6 @@ gpi2stream = {
 		13: '7',
 }
 
-# Time to wait after edge detection [sec]
-wait_time = 5
-
-# Locking interval for filtering short impulses [sec]
-lock_interval = 0
 
 
 # Dont touch
