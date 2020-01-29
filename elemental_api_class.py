@@ -59,7 +59,7 @@ class Elemental_api():
 		body = '<cue_point><event_id>{}</event_id><splice_offset>0</splice_offset><duration>0</duration></cue_point>'.format(stream_id)
 		
 		response = req.post(url, headers = self.headers, data = body)
-		return response.text
+		return response
 
 	def stop_cue(self, stream_id):
 		# body string is taken from gen_stop_cue_body function
@@ -67,7 +67,7 @@ class Elemental_api():
 		body = '<cue_point><event_id>{}</event_id><return_offset>0</return_offset></cue_point>'.format(stream_id)
 
 		response = req.post(url, headers = self.headers, data = body)
-		return response.text
+		return response
 
 
 def main():
