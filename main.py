@@ -31,7 +31,7 @@ elemental_api.gen_cue_part_url()
 GPIO.setmode(GPIO.BCM)
     #Setup GPIOs as inputs with PULL-UP
 for GPI in list(cf.gpi2stream):
-    GPIO.setup( GPI, GPIO.IN, pull_up_down=GPIO.PUD_UP )
+    GPIO.setup( GPI, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 
 # Define callbacks
@@ -51,33 +51,33 @@ def start_stop_avail(gpi):
     # Falling edge detected and Stream is NOT in Cue => Start cue
     if not edge and not stream.in_cue:
         response = stream.start_cue(elemental_api.start_cue)
-        # print(response)
-        
         reaction_time.end_measure()
         splice_counter += 1
-        print('Splice count:{}\n'.format(splice_counter))
+
+        print('3. AD STARTED: Splice count:{}\n'.format(splice_counter))
+        print(response.text)     
         reaction_time.print_measure()
-        
+        print('--------------------------------------------\n')
 
         gpi_stream_dict[gpi].update_info(stream)    # Update the actual object in the stream dict
-        #time.sleep(cf.wait_time)                    # Sleeps the thread for all GPIO inputs - not good
 
     # Rising edge detected and Stream is in Cue => Stop cue
     elif edge and stream.in_cue:        
         response = stream.stop_cue(elemental_api.stop_cue)
-        # print(response)
-        
         reaction_time.end_measure()
+        
+        print('3. AD STOPPED: Splice count:{}\n'.format(splice_counter))
+        print(response.text)
         reaction_time.print_measure()        
+        print('--------------------------------------------\n')
         
         gpi_stream_dict[gpi].update_info(stream)    # Update the actual object in the stream dict       
-        #time.sleep(cf.wait_time)                    # Sleeps the thread for all GPIO inputs - not good
         
 
 # Tie callbacks to events
 for GPI in list(cf.gpi2stream):
     #GPIO.add_event_detect( GPI, GPIO.BOTH, callback = start_stop_avail, bouncetime = cf.wait_time*1000)
-    GPIO.add_event_detect( GPI, GPIO.BOTH, callback = start_stop_avail)
+    GPIO.add_event_detect( GPI, GPIO.BOTH, callback = start_stop_avail, bouncetime = 50)
 
 @app.route('/')
 def index():
