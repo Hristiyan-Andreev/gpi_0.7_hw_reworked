@@ -44,7 +44,7 @@ def start_stop_avail(gpi):
     global splice_counter                   # Use for counting splices
     edge = GPIO.input(gpi)                  # Read if rising or falling edge
     stream = gpi_stream_dict[gpi]           # Make a copy of the dict object, for better perfomance
-    
+    print('--------------------------------------------\n')
     print("1. {} Event detcted".format(edge))
     print("2. Stream is in cue: {}".format(stream.in_cue))
               
