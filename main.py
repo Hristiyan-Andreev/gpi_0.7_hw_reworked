@@ -50,6 +50,7 @@ def start_avail(gpi):
         return 1
     
     response = stream.start_cue(elemental_api.start_cue)
+    print(response.text)
     reaction_time.end_measure()
 
 
@@ -76,6 +77,7 @@ def stop_avail(gpi):
     reaction_time.end_measure()
 
     print('2. AD STOPPED: Splice count:{}\n'.format(splice_counter))
+    print(response.text)
     reaction_time.print_measure()        
     print('--------------------------------------------\n')
     
