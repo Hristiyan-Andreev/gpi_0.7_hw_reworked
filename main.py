@@ -1,8 +1,10 @@
 import sys
 import time
 import RPi.GPIO as GPIO
+
 from flask import Flask
-from helpers import TimeMeasure, GpiStream
+from helpers import TimeMeasure
+from s_av_ctrl import StreamAvailController as StreamAvailCtrl
 import elemental_api_class as liveapi
 
 
@@ -16,14 +18,14 @@ splice_counter = 0
 app = Flask(__name__)
 app.config.from_object(cf.FlaskConfig)
 
-# Make a new dict with GPIs as Keys and (class)GpiStreams as values
-gpi_stream_dict = {}
-for gpi, id in cf.gpi2stream.items():
-    gpi_stream_dict[gpi] = GpiStream(id)
-
 # Set-up Elemental API class
 elemental_api = liveapi.Elemental_api(cf.elemental_ip)
 elemental_api.gen_cue_part_url()
+
+# Make a new dict with GPIs as Keys and (class)StreamAvailCtrl as values
+gpi_stream_dict = {}
+for gpi, id in cf.gpi2stream.items():
+    gpi_stream_dict[gpi] = StreamAvailCtrl(id, elemental_api)
 
 
 # Setup GPIO inputs/outputs
@@ -37,47 +39,47 @@ for GPI in list(cf.gpi2stream):
 # Define callbacks
 
 # Start cue on Falling edge and Stop Cue on Rising edge
-def start_stop_avail(gpi):
-    # Start measuring the reaction time between getting GPIO input and getting response from Elemental server
-    reaction_time.start_measure()
+# def start_stop_avail(gpi):
+#     # Start measuring the reaction time between getting GPIO input and getting response from Elemental server
+#     reaction_time.start_measure()
 
-    global splice_counter                   # Use for counting splices
-    edge = GPIO.input(gpi)                  # Read if rising or falling edge
-    stream = gpi_stream_dict[gpi]           # Make a copy of the dict object, for better perfomance
-    print('--------------------------------------------\n')
-    print("1. {} Event detcted".format(edge))
-    print("2. Stream is in cue: {}".format(stream.in_cue))
+#     global splice_counter                   # Use for counting splices
+#     edge = GPIO.input(gpi)                  # Read if rising or falling edge
+#     stream = gpi_stream_dict[gpi]           # Make a copy of the dict object, for better perfomance
+#     print('--------------------------------------------\n')
+#     print("1. {} Event detcted".format(edge))
+#     print("2. Stream is in cue: {}".format(stream.in_cue))
               
-    # Falling edge detected and Stream is NOT in Cue => Start cue
-    if not edge and not stream.in_cue:
-        response = stream.start_cue(elemental_api.start_cue)
-        reaction_time.end_measure()
-        splice_counter += 1
+#     # Falling edge detected and Stream is NOT in Cue => Start cue
+#     if not edge and not stream.in_cue:
+#         response = stream.start_cue(elemental_api.start_cue)
+#         reaction_time.end_measure()
+#         splice_counter += 1
 
-        print('3. AD STARTED: Splice count:{}\n'.format(splice_counter))
-        print(response.text)     
-        reaction_time.print_measure()
-        print('--------------------------------------------\n')
+#         print('3. AD STARTED: Splice count:{}\n'.format(splice_counter))
+#         print(response.text)     
+#         reaction_time.print_measure()
+#         print('--------------------------------------------\n')
 
-        gpi_stream_dict[gpi].update_info(stream)    # Update the actual object in the stream dict
+#         gpi_stream_dict[gpi].update_info(stream)    # Update the actual object in the stream dict
 
-    # Rising edge detected and Stream is in Cue => Stop cue
-    elif edge and stream.in_cue:        
-        response = stream.stop_cue(elemental_api.stop_cue)
-        reaction_time.end_measure()
+#     # Rising edge detected and Stream is in Cue => Stop cue
+#     elif edge and stream.in_cue:        
+#         response = stream.stop_cue(elemental_api.stop_cue)
+#         reaction_time.end_measure()
         
-        print('3. AD STOPPED: Splice count:{}\n'.format(splice_counter))
-        print(response.text)
-        reaction_time.print_measure()        
-        print('--------------------------------------------\n')
+#         print('3. AD STOPPED: Splice count:{}\n'.format(splice_counter))
+#         print(response.text)
+#         reaction_time.print_measure()        
+#         print('--------------------------------------------\n')
         
-        gpi_stream_dict[gpi].update_info(stream)    # Update the actual object in the stream dict       
+#         gpi_stream_dict[gpi].update_info(stream)    # Update the actual object in the stream dict       
         
 
 # Tie callbacks to events
 for GPI in list(cf.gpi2stream):
     #GPIO.add_event_detect( GPI, GPIO.BOTH, callback = start_stop_avail, bouncetime = cf.wait_time*1000)
-    GPIO.add_event_detect( GPI, GPIO.BOTH, callback = start_stop_avail, bouncetime = 20)
+    GPIO.add_event_detect( GPI, GPIO.BOTH, callback = gpi_stream_dict[GPI].start_stop_avail , bouncetime = 20)
 
 @app.route('/')
 def index():
