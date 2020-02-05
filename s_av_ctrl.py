@@ -1,6 +1,8 @@
 from threading import Timer
 import RPi.GPIO as GPIO
 
+from helpers import TimeMeasure
+
 
 class StreamAvailController: 
     
@@ -9,6 +11,7 @@ class StreamAvailController:
         self.in_cue = False
         self.splice_counter = 0
         self.elemental_api = elemental_api
+        # self.reaction_time = TimeMeasure()
         # self.channel_locked = False
         
     def __str__(self):
@@ -30,9 +33,9 @@ class StreamAvailController:
         return response
 
     def start_stop_avail(self, gpi_triggered):
-        # reaction_time.start_measure()
-
         edge = GPIO.input(gpi_triggered)        # Read if rising or falling edge
+        # self.reaction_time.start_measure()
+
         print('--------------------------------------------\n')
         print("1. {} Event detcted".format(edge))
         print("2. Stream is in cue: {}".format(self.in_cue))
@@ -40,20 +43,20 @@ class StreamAvailController:
         # Falling edge detected and Stream is NOT in Cue => Start cue
         if not edge and not self.in_cue:
             response = self.start_cue()
-            # reaction_time.end_measure()
+            # self.reaction_time.end_measure()
             self.splice_counter += 1
 
             print('4. AD STARTED: Splice count:{}\n'.format(self.splice_counter))
             print(response.text)     
-            # reaction_time.print_measure()
+            # self.reaction_time.print_measure()
             print('--------------------------------------------\n')
 
         # Rising edge detected and Stream is in Cue => Stop cue
         elif edge and self.in_cue:
             response = self.stop_cue()
-            # reaction_time.end_measure()
+            # self.reaction_time.end_measure()
             
             print('4. AD STOPPED: Splice count:{}\n'.format(self.splice_counter))
             print(response.text)
-            # reaction_time.print_measure()       
+            # self.reaction_time.print_measure()       
             print('--------------------------------------------\n')
