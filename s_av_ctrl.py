@@ -61,4 +61,4 @@ class StreamAvailController:
             print('4. AD STOPPED: Splice count:{} / Event Num: {}\n'.format(self.splice_counter, self.interrupt_counter))
             # print(response.text)
             self.reaction_time.print_measure()       
-            print('-------------------------------------------\n')
+            print('--------------------------------------------\n')
