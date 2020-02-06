@@ -27,7 +27,7 @@ class Elemental_api():
 
 		self.cue_part_url = url_events
 
-		print(self.cue_part_url)
+		# print(self.cue_part_url)
 
 		# Used only to copy/paste into the body variable in start_cue
 		# body = {
