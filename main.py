@@ -38,7 +38,7 @@ for GPI in list(cf.gpi2stream):
 # Tie callbacks to events
 for GPI in list(cf.gpi2stream):
     #GPIO.add_event_detect( GPI, GPIO.BOTH, callback = start_stop_avail, bouncetime = cf.wait_time*1000)
-    GPIO.add_event_detect( GPI, GPIO.BOTH, callback = gpi_stream_dict[GPI].start_stop_avail , bouncetime = 50)
+    GPIO.add_event_detect( GPI, GPIO.BOTH, callback = gpi_stream_dict[GPI].start_stop_avail , bouncetime = 20)
 
 @app.route('/')
 def index():
