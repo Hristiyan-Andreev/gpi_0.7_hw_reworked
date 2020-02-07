@@ -1,6 +1,7 @@
 import threading as td
 import RPi.GPIO as GPIO
 import datetime as dt
+import time
 
 from helpers import TimeMeasure
 
@@ -43,9 +44,10 @@ class StreamAvailController:
         return response
 
     def start_stop_avail(self, gpi_triggered):
+        time.sleep(0.001)
         edge = GPIO.input(gpi_triggered)        # Read if rising or falling edge
-        self.interrupt_counter += 1
         self.reaction_time.start_measure()
+        self.interrupt_counter += 1
 
         print('--------------------------------------------\n')
         print("1.{} / {} Event detcted / Number: {}".format(dt.datetime.now(), edge, self.interrupt_counter))

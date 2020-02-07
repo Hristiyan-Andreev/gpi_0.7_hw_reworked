@@ -1,8 +1,11 @@
 import sys
+# sys.modules.clear()
 import time
+import importlib
 import RPi.GPIO as GPIO
-
+import threading as td
 from flask import Flask
+
 from s_av_ctrl import StreamAvailController as StreamAvailCtrl
 import elemental_api_class as liveapi
 
@@ -10,8 +13,6 @@ import elemental_api_class as liveapi
 # sys.path.append('/home/pi/config')
 import config as cf
 
-# reaction_time = TimeMeasure()
-splice_counter = 0
 
 # Configure the web app (needed only for autorestart)
 app = Flask(__name__)
@@ -34,10 +35,10 @@ GPIO.setmode(GPIO.BCM)
 for GPI in list(cf.gpi2stream):
     GPIO.setup( GPI, GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
-
+locker = td.Lock()
 # Tie callbacks to events
+
 for GPI in list(cf.gpi2stream):
-    #GPIO.add_event_detect( GPI, GPIO.BOTH, callback = start_stop_avail, bouncetime = cf.wait_time*1000)
     GPIO.add_event_detect( GPI, GPIO.BOTH, callback = gpi_stream_dict[GPI].start_stop_avail , bouncetime = 20)
 
 @app.route('/')
