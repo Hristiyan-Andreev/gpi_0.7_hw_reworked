@@ -24,7 +24,7 @@ elemental_api.gen_cue_part_url()
 # Make a new dict with GPIs as Keys and (class)StreamAvailCtrl as values
 gpi_stream_dict = {}
 for gpi, id in cf.gpi2stream.items():
-    gpi_stream_dict[gpi] = StreamAvailCtrl(id, elemental_api)
+    gpi_stream_dict[gpi] = StreamAvailCtrl(gpi, id, elemental_api)
 
 
 # Setup GPIO inputs/outputs
