@@ -9,7 +9,7 @@ elemental_ip = '192.168.2.3'
 	# All must be seperated by commas
 gpi2stream = {
 		21: '5',
-		13: '5',
+		13: '7',
 }
 
 
