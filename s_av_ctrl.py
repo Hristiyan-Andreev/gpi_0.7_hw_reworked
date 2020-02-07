@@ -43,8 +43,14 @@ class StreamAvailController:
         self.in_cue = False
         return response
 
+    # def event_detected(self, gpi_trig):
+    #     ed = GPIO.input(gpi_trig)        # Read if rising or falling edge
+    #     # start_stop_av = lambda gpi_triggered=gpi_trig, edge=ed: self.start_stop_avail(gpi_triggered, edge)
+    #     td.Thread(target=start_stop_av).start()
+
+
     def start_stop_avail(self, gpi_triggered):
-        time.sleep(0.001)
+        # time.sleep(0.001)
         edge = GPIO.input(gpi_triggered)        # Read if rising or falling edge
         self.reaction_time.start_measure()
         self.interrupt_counter += 1
@@ -58,7 +64,9 @@ class StreamAvailController:
             response = self.start_cue()
             if response is 1:
                 print('Stream is locked!')
+
                 return 0
+
             self.reaction_time.end_measure()
             self.splice_counter += 1
 
@@ -83,6 +91,8 @@ class StreamAvailController:
             print('--------------------------------------------\n')
 
             return 0
+
+        return 0
 
     def lock_stream(self):
         self.stream_locked = True
