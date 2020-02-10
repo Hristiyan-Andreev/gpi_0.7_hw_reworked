@@ -6,6 +6,7 @@ import RPi.GPIO as GPIO
 import threading as td
 from flask import Flask
 
+import autoreload as ar
 from s_av_ctrl import StreamAvailController as StreamAvailCtrl
 import elemental_api_class as liveapi
 
