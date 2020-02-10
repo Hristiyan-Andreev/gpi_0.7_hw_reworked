@@ -10,14 +10,8 @@ import autoreload as ar
 from s_av_ctrl import StreamAvailController as StreamAvailCtrl
 import elemental_api_class as liveapi
 
-
 # sys.path.append('/home/pi/config')
 import config as cf
-
-
-# Configure the web app (needed only for autorestart)
-app = Flask(__name__)
-app.config.from_object(cf.FlaskConfig)
 
 # Set-up Elemental API class
 elemental_api = liveapi.Elemental_api(cf.elemental_ip)
@@ -42,12 +36,10 @@ locker = td.Lock()
 for GPI in list(cf.gpi2stream):
     GPIO.add_event_detect( GPI, GPIO.BOTH, callback = gpi_stream_dict[GPI].start_stop_avail , bouncetime = 20)
 
-@app.route('/')
-def index():
-    return "Working"
 
 if __name__ == '__main__':
     try:
-        app.run(debug=True, host='0.0.0.0')     
+        while(True):
+            pass
     except KeyboardInterrupt:
         GPIO.cleanup()
