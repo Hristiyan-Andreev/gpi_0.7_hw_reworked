@@ -42,13 +42,7 @@ class StreamAvailController:
         print("3. Stopping cue")
         self.in_cue = False
         return response
-
-    # def event_detected(self, gpi_trig):
-    #     ed = GPIO.input(gpi_trig)        # Read if rising or falling edge
-    #     # start_stop_av = lambda gpi_triggered=gpi_trig, edge=ed: self.start_stop_avail(gpi_triggered, edge)
-    #     td.Thread(target=start_stop_av).start()
-
-
+    
     def start_stop_avail(self, gpi_triggered):
         # time.sleep(0.001)
         edge = GPIO.input(gpi_triggered)        # Read if rising or falling edge
