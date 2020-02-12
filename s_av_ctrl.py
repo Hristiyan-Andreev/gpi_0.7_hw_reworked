@@ -40,6 +40,20 @@ class StreamAvailController:
         self.lock_stream()
         print("3. Stopping cue")
         return response
+
+    def event_detected(self):
+        edge1 = GPIO.input(self.gpi_trigger)
+        time.sleep(0.003)
+        edge2 = GPIO.input(self.gpi_trigger)
+
+        if edge1 != edge2:
+            time.sleep(0.003)
+            edge = GPIO.input(self.gpi_trigger)
+
+        elif edge1 == edge2:
+            edge = edge1
+
+        self.start_avail() if not edge else self.stop_avail()
     
     def start_stop_avail(self, gpi_triggered):
         # time.sleep(0.001)
