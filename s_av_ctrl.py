@@ -22,6 +22,9 @@ class StreamAvailController:
 
     def __str__(self):
         return "GPI: {} str_id: {} in_cue: {}".format(self.gpi_input, self.stream_id, self.in_cue)
+
+    def to_dict(self):
+        pass
         
     def start_cue(self):
         if self.stream_locked:
@@ -51,12 +54,11 @@ class StreamAvailController:
         print("1.{} / {} Event detcted / Number: {}".format(dt.datetime.now(), edge, self.interrupt_counter))
         print("2. Stream is in cue: {}".format(self.in_cue))
 
-        # Falling edge detected and Stream is NOT in Cue => Start cue
-        if not edge and not self.in_cue:
+        # Rising edge detected and Stream is NOT in Cue => Start cue
+        if edge and not self.in_cue:
             response = self.start_cue()
             if response is 1:
                 print('Stream is locked!')
-
                 return 0
 
             self.reaction_time.end_measure()
@@ -69,8 +71,8 @@ class StreamAvailController:
 
             return 0
 
-        # Rising edge detected and Stream is in Cue => Stop cue
-        elif edge and self.in_cue:
+        # Falling edge detected and Stream is in Cue => Stop cue
+        elif not edge and self.in_cue:
             response = self.stop_cue()
             self.reaction_time.end_measure()
             if response is 1:
@@ -94,12 +96,12 @@ class StreamAvailController:
     def unlock_stream (self):
         self.stream_locked = False
 
-        # If stream was locked on entering in an avail (GPIO -> 0)
+        # If stream was locked on entering in an avail (GPIO -> 1)
         if self.in_cue:
-            # If GPIO input is still 0 -> do nothing // If GPIO went to 1 -> stop cue
-            return 0 if not GPIO.input(self.gpi_trigger) else self.stop_cue()
+            # If GPIO input is still 1 -> do nothing // If GPIO went to 1 -> stop cue
+            return 1 if GPIO.input(self.gpi_trigger) else self.stop_cue()
           
-        # Or stream was locked on exiing from an avail (GPIO -> 1)
+        # Or stream was locked on exiing from an avail (GPIO -> 0)
         elif not self.in_cue:
-            # If GPIO input is still 1 -> do nothing // if GPIO went to 0 -> start cue
-            return 0 if GPIO.input(self.gpi_trigger) else self.start_cue()
+            # If GPIO input is still 0 -> do nothing // if GPIO went to 1 -> start cue
+            return 1 if not GPIO.input(self.gpi_trigger) else self.start_cue()
