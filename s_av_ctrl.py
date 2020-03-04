@@ -32,9 +32,6 @@ class StreamAvailController:
         return cls(gpio, stream_id, elemental_ip, lock_interval, in_cue)
 
 
-    def __str__(self):
-        return "GPI: {} str_id: {} in_cue: {}".format(self.gpi_input, self.stream_id, self.in_cue)
-
     def to_dict(self):
         obj_dict = {}
         obj_dict['gpi'] = self.gpi_trigger
@@ -43,6 +40,27 @@ class StreamAvailController:
         obj_dict['in_cue'] = self.in_cue
         obj_dict['elemental_ip'] = self.elemental_api
 
+
+    def __str__(self):
+        return "GPI: {} str_id: {} in_cue: {}".format(self.gpi_input, self.stream_id, self.in_cue)
+
+
+    def event_detected(self):
+        # Edge double checking to avoid false positives
+        edge_before = GPIO.input(self.gpi_trigger)
+        time.sleep(0.003)
+        edge_after = GPIO.input(self.gpi_trigger)
+
+        # If two edges are different -> measure third time
+        if edge_before != edge_after:
+            time.sleep(0.001)
+            edge = GPIO.input(self.gpi_trigger)
+
+        elif edge_before == edge_after:
+            time.sleep(0.001)     # Added for determinisim between the two cases
+            edge = edge_before
+
+        self.start_avail() if not edge else self.stop_avail()
         
     def start_cue(self):
         if self.stream_locked:
