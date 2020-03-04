@@ -4,11 +4,13 @@ import ijson
 import time
 
 
+
 class Elemental_api():
 	def __init__(self, elemetnal_ip):
 		self.elemental_ip = elemetnal_ip
 		self.headers = {'Accept': 'application/xml', 'Content-type': 'application/xml'}
 		self.cue_part_url = ''
+		self.gen_cue_part_url()
 
 	def list_live_events(self):
 		endpoint = 'api/live_events'

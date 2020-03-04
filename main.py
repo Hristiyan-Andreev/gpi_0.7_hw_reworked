@@ -4,22 +4,21 @@ import time
 import importlib
 import RPi.GPIO as GPIO
 import threading as td
-from flask import Flask
 
 from s_av_ctrl import StreamAvailController as StreamAvailCtrl
-import elemental_api_class as liveapi
+
 
 # sys.path.append('/home/pi/config')
 import config as cf
 
 # Set-up Elemental API class
-elemental_api = liveapi.Elemental_api(cf.elemental_ip)
-elemental_api.gen_cue_part_url()
+
+# elemental_api.gen_cue_part_url()
 
 # Make a new dict with GPIs as Keys and (class)StreamAvailCtrl as values
 gpi_stream_dict = {}
 for gpi, id in cf.gpi2stream.items():
-    gpi_stream_dict[gpi] = StreamAvailCtrl(gpi, id, elemental_api)
+    gpi_stream_dict[gpi] = StreamAvailCtrl(gpi, id, cf.elemental_ip)
 
 
 # Setup GPIO inputs/outputs

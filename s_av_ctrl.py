@@ -4,27 +4,45 @@ import datetime as dt
 import time
 
 from helpers import TimeMeasure
-
+import elemental_api_class as liveapi
 
 class StreamAvailController: 
     
-    def __init__(self, gpio, id, elemental_api):
+    def __init__(self, gpio, id, elemental_ip, lock_interval = 3, in_cue = False):
         self.gpi_trigger = gpio
         self.stream_id = id
-        self.in_cue = False
+        self.elemental_api = liveapi.Elemental_api(elemental_ip)
+        self.lock_interval = lock_interval
+
+        self.in_cue = in_cue
         self.stream_locked = False
-        self.lock_interval = 3
         self.splice_counter = 0
         self.interrupt_counter = 0
-        self.elemental_api = elemental_api
         self.reaction_time = TimeMeasure()
+
+
+    @classmethod
+    def from_dict(cls, state_dict):
+        gpio = state_dict['gpi']
+        stream_id = state_dict['event_id']
+        lock_interval = state_dict['lock_interval']
+        in_cue = state_dict['in_cue']
+        elemental_ip = state_dict['elemental']
+
+        return cls(gpio, stream_id, elemental_ip, lock_interval, in_cue)
 
 
     def __str__(self):
         return "GPI: {} str_id: {} in_cue: {}".format(self.gpi_input, self.stream_id, self.in_cue)
 
     def to_dict(self):
-        pass
+        obj_dict = {}
+        obj_dict['gpi'] = self.gpi_trigger
+        obj_dict['event_id'] = self.stream_id
+        obj_dict['lock_interval'] = self.lock_interval
+        obj_dict['in_cue'] = self.in_cue
+        obj_dict['elemental_ip'] = self.elemental_api
+
         
     def start_cue(self):
         if self.stream_locked:
@@ -35,6 +53,7 @@ class StreamAvailController:
         print("3. Starting cue")
         return response
         
+
     def stop_cue(self):
         if self.stream_locked:
             return 1
@@ -44,6 +63,7 @@ class StreamAvailController:
         print("3. Stopping cue")
         return response
     
+
     def start_stop_avail(self, gpi_triggered):
         # time.sleep(0.001)
         edge = GPIO.input(gpi_triggered)        # Read if rising or falling edge
@@ -88,10 +108,12 @@ class StreamAvailController:
 
         return 0
 
+
     def lock_stream(self):
         self.stream_locked = True
         unlock_timer = td.Timer(self.lock_interval, self.unlock_stream)
         unlock_timer.start()
+
 
     def unlock_stream (self):
         self.stream_locked = False
