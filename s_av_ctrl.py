@@ -8,37 +8,37 @@ import elemental_api_class as liveapi
 
 class StreamAvailController: 
     
-    def __init__(self, gpio, id, elemental_ip, lock_interval = 3, in_cue = False):
-        self.gpi_trigger = gpio
-        self.stream_id = id
+    def __init__(self, gpi_trigger, event_id, elemental_ip, lock_interval = 3, in_cue = False):
+        self.gpi_trigger = gpi_trigger
+        self.event_id = event_id
         self.elemental_api = liveapi.Elemental_api(elemental_ip)
         self.lock_interval = lock_interval
-
         self.in_cue = in_cue
+
         self.stream_locked = False
         self.splice_counter = 0
         self.interrupt_counter = 0
         self.reaction_time = TimeMeasure()
 
 
-    @classmethod
-    def from_dict(cls, state_dict):
-        gpio = state_dict['gpi']
-        stream_id = state_dict['event_id']
-        lock_interval = state_dict['lock_interval']
-        in_cue = state_dict['in_cue']
-        elemental_ip = state_dict['elemental']
-
-        return cls(gpio, stream_id, elemental_ip, lock_interval, in_cue)
-
-
     def to_dict(self):
         obj_dict = {}
-        obj_dict['gpi'] = self.gpi_trigger
-        obj_dict['event_id'] = self.stream_id
+        obj_dict['gpi_trigger'] = self.gpi_trigger
+        obj_dict['event_id'] = self.event_id
         obj_dict['lock_interval'] = self.lock_interval
         obj_dict['in_cue'] = self.in_cue
         obj_dict['elemental_ip'] = self.elemental_api
+
+
+    @classmethod
+    def from_dict(cls, state_dict):
+        gpi_trigger = state_dict['gpi_trigger']
+        event_id = state_dict['event_id']
+        lock_interval = state_dict['lock_interval']
+        in_cue = state_dict['in_cue']
+        elemental_ip = state_dict['elemental_ip']
+
+        return cls(gpi_trigger, event_id, elemental_ip, lock_interval, in_cue = in_cue)
 
 
     def __str__(self):
@@ -62,6 +62,7 @@ class StreamAvailController:
 
         self.start_avail() if not edge else self.stop_avail()
         
+
     def start_cue(self):
         if self.stream_locked:
             return 1
