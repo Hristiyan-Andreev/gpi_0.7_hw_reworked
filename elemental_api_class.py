@@ -1,6 +1,5 @@
 import requests as req
 import dicttoxml
-import ijson
 import time
 
 

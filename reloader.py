@@ -5,9 +5,9 @@ import threading as th
 import time
 import logging as log
 
-class WatchDogReload(th.Thread):
+class Reloader(th.Thread):
     def __init__(self, files_to_watch, gpi_pair_dict = None, check_interval = 2, linux = True,\
-                before_reload = None):
+                before_reload = None, file = None):
         '''
         @files_to_watch: Files watched for changes list of strings - e.g.\
              ['config.json','file.py']
@@ -20,6 +20,7 @@ class WatchDogReload(th.Thread):
         self.start_up_edit_times = [(f, getmtime(f)) for f in self.files]
         self.check_interval = check_interval
         self.linux = linux
+        self.file = file
         if before_reload:
             self.before_reload_func = before_reload
             self.before_reload_dict = gpi_pair_dict
@@ -35,17 +36,24 @@ class WatchDogReload(th.Thread):
                     print('--> restarting')
                     if self.linux is True:
                     # When running the script via `./daemon.py` (e.g. Linux/Mac OS), use
-                        # if self.before_reload_func:
-                        #     before_reload_func(before_reload_args)
-                        os.execv(__file__, sys.argv)
-                        pass
-
-                    elif self.linux is False:
                         try:
                             if self.before_reload_func:
                                 self.before_reload_func(self.before_reload_dict)
                         except AttributeError:
                             print('No pre reload command given')
+
+                        print(sys.executable, sys.argv)
+                        os.execl(sys.executable, sys.executable, *sys.argv)
+                        pass
+
+                    elif self.linux is False:
                     # When running the script via `python daemon.py` (e.g. Windows), use
-                        os.execv(sys.executable, ['python'] + sys.argv)
+                        try:
+                            if self.before_reload_func:
+                                self.before_reload_func(self.before_reload_dict)
+                        except AttributeError:
+                            print('No pre reload command given')
+
+                        print(sys.executable, sys.argv)
+                        os.execv(sys.executable, ['python3'] + sys.argv)
         
