@@ -6,19 +6,34 @@ import importlib
 
 from s_av_ctrl import StreamAvailController as StreamAvailCtrl
 from reloader import Reloader
+from state_manager import StateManager
 
 # sys.path.append('/home/pi/config')
 import config as cf
 
-# Set-up reloader on file changes
-WATCHED_FILES = ['config.json']
-reload_thread = Reloader(WATCHED_FILES, linux=True)
-reload_thread.start()
+
+# Set-up state manager
+stater = StateManager(cf.LAST_EXIT_FILE, cf.STATE_FILE)
 
 # Make a new dict with GPIs as Keys and (class)StreamAvailCtrl as values
-gpi_stream_dict = {}
-for gpi, id in cf.gpi2stream.items():
-    gpi_stream_dict[gpi] = StreamAvailCtrl(gpi, id, cf.elemental_ip)
+# Check wether last exit was from reload and load state if necessary
+gpi_event_dict = {}
+if stater.is_last_exit_from_reload() is True:
+    gpi_cue_state = stater.load_gpi_state()
+
+    for gpi, id in cf.gpi2stream.items():
+        gpi_event_dict[gpi] = StreamAvailCtrl(gpi, id, cf.elemental_ip,\
+            in_cue = gpi_cue_state[gpi])
+
+elif stater.is_last_exit_from_reload() is False:
+    for gpi, id in cf.gpi2stream.items():
+        gpi_event_dict[gpi] = StreamAvailCtrl(gpi, id, cf.elemental_ip)
+   
+# Set-up reloader on file changes
+
+reload_thread = Reloader(cf.WATCHED_FILES, linux=True,\
+     before_reload= stater.save_gpi_state, gpi_event_dict = gpi_event_dict)
+reload_thread.start()
 
 
 # Setup GPIO inputs/outputs
@@ -31,7 +46,7 @@ for gpi, id in cf.gpi2stream.items():
 # # Tie callbacks to events
 
 # for GPI in list(cf.gpi2stream):
-#     GPIO.add_event_detect( GPI, GPIO.BOTH, callback = gpi_stream_dict[GPI].\
+#     GPIO.add_event_detect( GPI, GPIO.BOTH, callback = gpi_event_dict[GPI].\
 #         start_stop_avail , bouncetime = 20)
 
 

@@ -2,8 +2,8 @@ import pickle as pk
 
 class StateManager():
     def __init__(self, last_exit_file, state_file ):
-        self.last_exit_file = self.last_exit_file
-        self.state_file = self.state_file
+        self.last_exit_file = last_exit_file
+        self.state_file = state_file
 
 
     def is_last_exit_from_reload(self):
@@ -11,8 +11,9 @@ class StateManager():
             with open(self.last_exit_file,'rb') as exit_file:
                 last_exit = pk.load(exit_file)
                 print(last_exit)
-        except Exception as e:
+        except FileNotFoundError or FileExistsError as e:
             print(e)
+            self.save_last_exit(last_exit_state='Exit')
             pass
 
         if last_exit == 'Reload':
@@ -22,11 +23,15 @@ class StateManager():
             return False
 
 
-    def save_gpi_state(self, gpi_cue_state_dict):
+    def save_gpi_state(self, gpi_stream_dict):
+        state_dict = {}
+        for gpi, obj in gpi_stream_dict.items():
+            state_dict[gpi] = obj.in_cue
+
         with open(self.state_file, 'wb') as self.state_file:
-                pk.dump(gpi_cue_state_dict, self.state_file, protocol=pk.\
+                pk.dump(state_dict, self.state_file, protocol=pk.\
                     HIGHEST_PROTOCOL)
-        save_last_exit()
+        self.save_last_exit()
 
 
     def load_gpi_state(self):

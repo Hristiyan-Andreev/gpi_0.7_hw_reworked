@@ -25,4 +25,3 @@ class TimeMeasure():
         print('{}: {}'.format(msg,str(self.end_time)))
         # print(msg + str(self.end_time))
 
- 

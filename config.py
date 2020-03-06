@@ -1,5 +1,9 @@
 import json
 
+WATCHED_FILES = ['config.json']
+LAST_EXIT_FILE = 'last_exit.pkl'
+STATE_FILE = 'gpi_pair_state.pkl'
+
 config_file = 'config.json'
 with open(config_file) as cf_file:
     config_dict = json.load(cf_file)

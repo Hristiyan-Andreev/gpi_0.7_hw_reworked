@@ -6,7 +6,7 @@ import time
 import logging as log
 
 class Reloader(th.Thread):
-    def __init__(self, files_to_watch, gpi_pair_dict = None, check_interval = 2, linux = True,\
+    def __init__(self, files_to_watch, gpi_event_dict = None, check_interval = 2, linux = True,\
                 before_reload = None, file = None):
         '''
         @files_to_watch: Files watched for changes list of strings - e.g.\
@@ -23,7 +23,7 @@ class Reloader(th.Thread):
         self.file = file
         if before_reload:
             self.before_reload_func = before_reload
-            self.before_reload_dict = gpi_pair_dict
+            self.before_reload_dict = gpi_event_dict
 
     def run(self):
         while True:
@@ -42,7 +42,7 @@ class Reloader(th.Thread):
                         except AttributeError:
                             print('No pre reload command given')
 
-                        print(sys.executable, sys.argv)
+                        # print(sys.executable, sys.argv)
                         os.execl(sys.executable, sys.executable, *sys.argv)
                         pass
 
@@ -54,6 +54,6 @@ class Reloader(th.Thread):
                         except AttributeError:
                             print('No pre reload command given')
 
-                        print(sys.executable, sys.argv)
+                        # print(sys.executable, sys.argv)
                         os.execv(sys.executable, ['python3'] + sys.argv)
         
