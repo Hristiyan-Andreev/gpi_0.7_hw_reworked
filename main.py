@@ -20,6 +20,7 @@ stater = StateManager(cf.LAST_EXIT_FILE, cf.STATE_FILE)
 gpi_event_dict = {}
 if stater.is_last_exit_from_reload() is True:
     gpi_cue_state = stater.load_gpi_state()
+    print(gpi_cue_state)
 
     for gpi, id in cf.gpi2stream.items():
         gpi_event_dict[gpi] = StreamAvailCtrl(gpi, id, cf.elemental_ip,\
@@ -53,7 +54,8 @@ reload_thread.start()
 if __name__ == '__main__':
     try:
         while(True):
+            gpi_event_dict['21'].in_cue = True
             pass
     except KeyboardInterrupt:
-        # GPIO.cleanup()
+        stater.save_last_exit(last_exit_state='Exit')
         pass
