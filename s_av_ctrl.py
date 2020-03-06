@@ -21,26 +21,6 @@ class StreamAvailController:
         self.reaction_time = TimeMeasure()
 
 
-    @classmethod
-    def from_dict(cls, state_dict):
-        gpio = state_dict['gpi']
-        stream_id = state_dict['event_id']
-        lock_interval = state_dict['lock_interval']
-        in_cue = state_dict['in_cue']
-        elemental_ip = state_dict['elemental']
-
-        return cls(gpio, stream_id, elemental_ip, lock_interval, in_cue)
-
-
-    def to_dict(self):
-        obj_dict = {}
-        obj_dict['gpi'] = self.gpi_trigger
-        obj_dict['event_id'] = self.stream_id
-        obj_dict['lock_interval'] = self.lock_interval
-        obj_dict['in_cue'] = self.in_cue
-        obj_dict['elemental_ip'] = self.elemental_api
-
-
     def __str__(self):
         return "GPI: {} str_id: {} in_cue: {}".format(self.gpi_input, self.stream_id, self.in_cue)
 
