@@ -56,28 +56,29 @@ class StreamAvailController:
         try:
             if self.in_cue:
                 raise Exception("Stream ({}) is already in avail".format(self.event_id))
-                return 1
-
+                
             if self.stream_locked:
                 raise Exception("Stream ({}) is locked".format(self.event_id))
-                return 1
 
             response = self.elemental_api.start_cue(self.stream_id)
             if response.status_code != 200:
                 raise Exception("Elemental server error: {}".format(response.status_code))
-                return 1
 
-            self.in_cue = True
-            self.lock_stream()
-            
-            self.reaction_time.end_measure()
-            self.splice_counter += 1
-            print('3. AD STARTED: Splice count:{} / Event Num: {}\n'.format(self.splice_counter, self.interrupt_counter))
-            print(response.text)
-            self.reaction_time.print_measure()
-            print('--------------------------------------------\n')
+        except Exception as e:
+            print(e)
+            pass
 
-            return response        
+        self.in_cue = True
+        self.lock_stream()
+        
+        self.reaction_time.end_measure()
+        self.splice_counter += 1
+        print('3. AD STARTED: Splice count:{} / Event Num: {}\n'.format(self.splice_counter, self.interrupt_counter))
+        print(response.text)
+        self.reaction_time.print_measure()
+        print('--------------------------------------------\n')
+
+        return response        
 
     def stop_avail(self):
         try:
@@ -93,6 +94,10 @@ class StreamAvailController:
             if response.status_code != 200:
                 raise Exception("Elemental server error: {}".format(response.status_code))
                 return 1
+
+        except Exception as e:
+            print(e)
+            pass
 
         self.in_cue = False
         self.lock_stream()
