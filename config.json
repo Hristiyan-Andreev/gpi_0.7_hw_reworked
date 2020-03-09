@@ -1,8 +1,11 @@
 {
-    "elemental_ip": "192.168.2.13",
-    "gpi_to_event":
-    {
+    "elemental_ip": "192.168.2.20",
+    "elemental_user": "user",
+    "elemental_pass": "pass",
+    "gpi_to_event": {
         "21": "5",
-        "13": "5"
-    }
+        "12": "7"
+    },
+    "min_avail_enabled": "True",
+    "min_avail_duration": 3 
 }

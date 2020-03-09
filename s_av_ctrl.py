@@ -20,30 +20,8 @@ class StreamAvailController:
         self.interrupt_counter = 0
         self.reaction_time = TimeMeasure()
 
-
-    def to_dict(self):
-        obj_dict = {}
-        obj_dict['gpi_trigger'] = self.gpi_trigger
-        obj_dict['event_id'] = self.event_id
-        obj_dict['lock_interval'] = self.lock_interval
-        obj_dict['in_cue'] = self.in_cue
-        obj_dict['elemental_ip'] = self.elemental_api
-
-
-    @classmethod
-    def from_dict(cls, state_dict):
-        gpi_trigger = state_dict['gpi_trigger']
-        event_id = state_dict['event_id']
-        lock_interval = state_dict['lock_interval']
-        in_cue = state_dict['in_cue']
-        elemental_ip = state_dict['elemental_ip']
-
-        return cls(gpi_trigger, event_id, elemental_ip, lock_interval, in_cue = in_cue)
-
-
     def __str__(self):
         return "GPI: {} str_id: {} in_cue: {}".format(self.gpi_input, self.stream_id, self.in_cue)
-
 
     # def event_detected(self):
     #     # Edge double checking to avoid false positives
