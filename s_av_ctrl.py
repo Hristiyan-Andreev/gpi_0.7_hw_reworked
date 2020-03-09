@@ -23,48 +23,22 @@ class StreamAvailController:
     def __str__(self):
         return "GPI: {} str_id: {} in_cue: {}".format(self.gpi_input, self.stream_id, self.in_cue)
 
-    # def event_detected(self):
-    #     # Edge double checking to avoid false positives
-    #     edge_before = GPIO.input(self.gpi_trigger)
-    #     time.sleep(0.003)
-    #     edge_after = GPIO.input(self.gpi_trigger)
+    def event_detected(self):
+        # Edge double checking to avoid false positives
+        edge_before = GPIO.input(self.gpi_trigger)
+        time.sleep(0.003)
+        edge_after = GPIO.input(self.gpi_trigger)
 
-    #     # If two edges are different -> measure third time
-    #     if edge_before != edge_after:
-    #         time.sleep(0.001)
-    #         edge = GPIO.input(self.gpi_trigger)
+        # If two edges are different -> measure third time
+        if edge_before != edge_after:
+            time.sleep(0.001)
+            edge = GPIO.input(self.gpi_trigger)
 
-    #     elif edge_before == edge_after:
-    #         time.sleep(0.001)     # Added for determinisim between the two cases
-    #         edge = edge_before
+        elif edge_before == edge_after:
+            time.sleep(0.001)     # Added for determinisim between the two cases
+            edge = edge_before
 
-    #     self.start_avail() if not edge else self.stop_avail()
         
-
-    def start_cue(self):
-        if self.stream_locked:
-            return 1
-        response = self.elemental_api.start_cue(self.stream_id)
-        self.in_cue = True
-        self.lock_stream()
-        print("3. Starting cue")
-        return response
-        
-
-    def stop_cue(self):
-        if self.stream_locked:
-            return 1
-        response = self.elemental_api.stop_cue(self.stream_id)
-        self.in_cue = False
-        self.lock_stream()
-        print("3. Stopping cue")
-        return response
-    
-
-    def start_stop_avail(self, gpi_triggered):
-        # time.sleep(0.001)
-        # edge = GPIO.input(gpi_triggered)        # Read if rising or falling edge
-        edge = 1
         self.reaction_time.start_measure()
         self.interrupt_counter += 1
 
@@ -72,41 +46,65 @@ class StreamAvailController:
         print("1.{} / {} Event detcted / Number: {}".format(dt.datetime.now(), edge, self.interrupt_counter))
         print("2. Stream is in cue: {}".format(self.in_cue))
 
-        # Rising edge detected and Stream is NOT in Cue => Start cue
-        if edge and not self.in_cue:
-            response = self.start_cue()
-            if response is 1:
-                print('Stream is locked!')
-                return 0
-
-            self.reaction_time.end_measure()
-            self.splice_counter += 1
-
-            print('4. AD STARTED: Splice count:{} / Event Num: {}\n'.format(self.splice_counter, self.interrupt_counter))
-            print(response.text)
-            self.reaction_time.print_measure()
-            print('--------------------------------------------\n')
-
-            return 0
-
-        # Falling edge detected and Stream is in Cue => Stop cue
-        elif not edge and self.in_cue:
-            response = self.stop_cue()
-            self.reaction_time.end_measure()
-            if response is 1:
-                print('Stream is locked!')
-                return 0
-            
-            print('4. AD STOPPED: Splice count:{} / Event Num: {}\n'.format(self.splice_counter, self.interrupt_counter))
-            print(response.text)
-            self.reaction_time.print_measure()       
-            print('--------------------------------------------\n')
-
-            return 0
+        self.start_avail() if edge else self.stop_avail()
 
         return 0
 
 
+    def start_avail(self):
+
+        try:
+            if self.in_cue:
+                raise Exception("Stream ({}) is already in avail".format(self.event_id))
+                return 1
+
+            if self.stream_locked:
+                raise Exception("Stream ({}) is locked".format(self.event_id))
+                return 1
+
+            response = self.elemental_api.start_cue(self.stream_id)
+            if response.status_code != 200:
+                raise Exception("Elemental server error: {}".format(response.status_code))
+                return 1
+
+            self.in_cue = True
+            self.lock_stream()
+            
+            self.reaction_time.end_measure()
+            self.splice_counter += 1
+            print('3. AD STARTED: Splice count:{} / Event Num: {}\n'.format(self.splice_counter, self.interrupt_counter))
+            print(response.text)
+            self.reaction_time.print_measure()
+            print('--------------------------------------------\n')
+
+            return response        
+
+    def stop_avail(self):
+        try:
+            if not self.in_cue:
+                raise Exception("Stream ({}) is not in avail".format(self.event_id))
+                return 1
+
+            if self.stream_locked:
+                raise Exception("Stream ({}) is locked".format(self.event_id))
+                return 1
+
+            response = self.elemental_api.stop_cue(self.stream_id)
+            if response.status_code != 200:
+                raise Exception("Elemental server error: {}".format(response.status_code))
+                return 1
+
+        self.in_cue = False
+        self.lock_stream()
+
+        print('3. AD STOPPED: Splice count:{} / Event Num: {}\n'.format(self.splice_counter, self.interrupt_counter))
+        print(response.text)
+        self.reaction_time.print_measure()       
+        print('--------------------------------------------\n')
+
+        return response
+    
+ 
     def lock_stream(self):
         self.stream_locked = True
         unlock_timer = td.Timer(self.lock_interval, self.unlock_stream)
