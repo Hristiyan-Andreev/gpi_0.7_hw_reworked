@@ -19,7 +19,6 @@ class Reloader(th.Thread):
         self.start_up_edit_times = [(f, getmtime(f)) for f in self.files]
         self.check_interval = check_interval
         self.linux = linux
-        self.file = file
         self.logger = self.setup_logger()
         if before_reload:
             self.before_reload_func = before_reload

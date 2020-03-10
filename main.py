@@ -3,6 +3,8 @@ import sys
 import time
 import importlib
 # import RPi.GPIO as GPIO
+# import pynput.keyboard as kboard
+import keyboard
 
 from s_av_ctrl import StreamAvailController as StreamAvailCtrl
 from reloader import Reloader
@@ -36,7 +38,20 @@ reload_thread = Reloader(cf.WATCHED_FILES, linux=True,\
      before_reload= stater.save_gpi_state, gpi_event_dict = gpi_event_dict)
 reload_thread.start()
 
+# def on_press(key):
+#     print('{0} press'.format(key))
+    
+#     if key == 'q':
+#         gpi_event_dict['21'].event_detected(True)
 
+#     elif key == 's':
+#         gpi_event_dict['21'].event_detected(False)
+
+# def on_release(key):
+#     print('{0} release'.format(key))
+#     if key == kboard.Key.esc:
+#         # Stop listener
+#         return False
 # Setup GPIO inputs/outputs
     #Use Board pin numbering - etc. (12) in pinout command
 # GPIO.setmode(GPIO.BCM)
@@ -53,9 +68,20 @@ reload_thread.start()
 
 if __name__ == '__main__':
     try:
+        print(gpi_event_dict)
         while(True):
-            gpi_event_dict['21'].in_cue = True
+            if keyboard.is_pressed('q'):
+                print('STARTING!')
+                gpi_event_dict['21'].event_detected(True)
+                time.sleep(1)
+
+            elif keyboard.is_pressed('s'):
+                print('STOPPPING!')
+                gpi_event_dict['21'].event_detected(False)
+                time.sleep(1)
+
             pass
     except KeyboardInterrupt:
+        print('Bye, bye')
         stater.save_last_exit(last_exit_state='Exit')
         pass
