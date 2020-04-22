@@ -1,12 +1,18 @@
 # import sys
 import time
-# from threading import Timer
-# import elemental_api_class as liveapi
+from datetime import datetime as dt
 
 # sys.path.append('/home/pi/config')
 import config as cf
 import os
 import logging as log
+
+
+# datetime object containing current date and time
+now = dt.now()
+# dd/mm/YY H:M:S
+dt_string = now.strftime("%d-%m-%Y %H:%M:%S")
+
 
 # Time measurement class
 class TimeMeasure():
@@ -29,7 +35,7 @@ class TimeMeasure():
 
 def setup_main_logger():
     path = os.path.join('/','var','log')
-    filename = '{}/{}'.format(path,'main_{}.log'.format(time.localtime()))
+    filename = '{}/{}'.format(path,'main_{}.log'.format(dt_string))
 
     file_handler = log.FileHandler(filename)
     file_handler.setLevel(log.DEBUG)

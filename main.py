@@ -66,6 +66,6 @@ if __name__ == '__main__':
             gpi_event_dict['21'].in_cue = True
             pass
     except KeyboardInterrupt:
-        main_log('Exiting on key interrupt')
+        main_log.info('Exiting on key interrupt')
         stater.save_last_exit(last_exit_state='Exit')
         pass
