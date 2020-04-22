@@ -10,10 +10,11 @@ class StateManager():
         try:
             with open(self.last_exit_file,'rb') as exit_file:
                 last_exit = pk.load(exit_file)
-                print(last_exit)
+                # print(last_exit)
         except FileNotFoundError or FileExistsError as e:
             print(e)
             self.save_last_exit(last_exit_state='Exit')
+            last_exit = 'Exit'
             pass
 
         if last_exit == 'Reload':

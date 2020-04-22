@@ -21,7 +21,7 @@ class StreamAvailController:
         self.reaction_time = TimeMeasure()
 
     def __str__(self):
-        return "GPI: {} str_id: {} in_cue: {}".format(self.gpi_input, self.stream_id, self.in_cue)
+        return "GPI: {}, event_id: {}, in_cue: {}".format(self.gpi_trigger, self.event_id, self.in_cue)
 
     # def event_detected(self):
     #     # Edge double checking to avoid false positives

@@ -1,3 +1,7 @@
 {
-    "python.pythonPath": "C:\\Users\\Chris\\.platformio\\penv\\Scripts\\python.exe"
+    "python.pythonPath": "C:\\Users\\Chris\\.platformio\\penv\\Scripts\\python.exe",
+    "workbench.preferredDarkColorTheme": "Material Theme High Contrast",
+    "workbench.colorTheme": "Material Theme Darker High Contrast",
+    "terminal.integrated.fontSize": 15,
+    "editor.fontSize": 15
 }
