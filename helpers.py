@@ -33,11 +33,14 @@ class TimeMeasure():
         print('{}: {}'.format(msg,str(self.end_time)))
         # print(msg + str(self.end_time))
 
-def setup_main_logger():
+def setup_logger(filename = None):
     path = os.path.join('/','var','log')
-    filename = '{}/{}'.format(path,'main_{}.log'.format(dt_string))
+    if filename:
+        full_filename = '{}/{}'.format(path,'{}_{}.log'.format(filename,dt_string))
+    else:
+        full_filename = '{}/{}'.format(path,'main_{}.log'.format(dt_string))
 
-    file_handler = log.FileHandler(filename)
+    file_handler = log.FileHandler(full_filename)
     file_handler.setLevel(log.DEBUG)
     file_format = log.Formatter('%(asctime)s - %(threadName)s - %(levelname)s - %(message)s')
     file_handler.setFormatter(file_format)

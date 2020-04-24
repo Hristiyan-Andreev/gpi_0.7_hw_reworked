@@ -5,8 +5,12 @@ LAST_EXIT_FILE = 'last_exit.pkl'
 STATE_FILE = 'gpi_pair_state.pkl'
 
 config_file = 'config.json'
-with open(config_file) as cf_file:
-    config_dict = json.load(cf_file)
+
+try:
+	with open(config_file) as cf_file:
+		config_dict = json.load(cf_file)
+except FileExistsError or FileNotFoundError:
+	print('Nema config.json file, losho.')
 # Configuration parameters - IPs, Inputs, Stream IDs
 
 	# Set elemental_ip 
