@@ -2,20 +2,35 @@
 import sys
 import time
 import importlib
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 
+import elemental_api_class as liveapi
 from s_av_ctrl import StreamAvailController as StreamAvailCtrl
 from reloader import Reloader
 from state_manager import StateManager
-from helpers import setup_main_logger
+from helpers import setup_logger
 # sys.path.append('/home/pi/config')
 import config as cf
 
 
+main_log = setup_logger()
+main_log.info('Starting Ad Avail Controller ver. 0.7')
+
+def check_elemental_connection():
+    global main_log
+    live_api = liveapi.Elemental_api(cf.elemental_ip)
+    try:
+        response = live_api.list_live_events()
+        if response.status_code != 200:
+                raise Exception("Elemental server error: {}".format(response.status_code))
+    except Exception as e:
+        main_log.error('Error: {}'.format(e))
+
+
+
 def start_up_squence():
+    global main_log
     
-    main_log = setup_main_logger()
-    main_log.info('Starting Ad Avail Controller ver. 0.7')
     # main_log.info('Configuration files imported')
 
     # Set-up state manager
@@ -27,14 +42,13 @@ def start_up_squence():
     if stater.is_last_exit_from_reload() is True:
         gpi_cue_state = stater.load_gpi_state()
         
-
         for gpi, id in cf.gpi2stream.items():
             gpi_event_dict[gpi] = StreamAvailCtrl(gpi, id, cf.elemental_ip,\
                 in_cue = gpi_cue_state[gpi])
 
     elif stater.is_last_exit_from_reload() is False:
         for gpi, id in cf.gpi2stream.items():
-            gpi_event_dict[gpi] = StreamAvailCtrl(gpi, id, cf.elemental_ip)
+            gpi_event_dict[gpi] = StreamAvailCtrl(gpi, id, cf.elemental_ip, lock_interval=cf.min_av_dur)
 
 
     main_log.info('State loaded')
@@ -50,18 +64,21 @@ def start_up_squence():
     #     Use Board pin numbering - etc. (12) in pinout command
     GPIO.setmode(GPIO.BCM)
     #Setup GPIOs as inputs with PULL-UP
-    for GPI in list(cf.gpi2stream):
-        GPIO.setup( GPI, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+    for gpi,id in cf.gpi2stream.items():
+        print(gpi)
+        GPIO.setup( int(gpi), GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
     # Tie callbacks to events
 
-    for GPI in list(cf.gpi2stream):
-        GPIO.add_event_detect( GPI, GPIO.BOTH, callback = gpi_event_dict[GPI].\
+    for gpi,id in cf.gpi2stream.items():
+        GPIO.add_event_detect( int(gpi), GPIO.BOTH, callback = gpi_event_dict[gpi].\
             start_stop_avail , bouncetime = 20)
 
+    check_elemental_connection()
 
 if __name__ == '__main__':
     try:
+        start_up_squence()
         while(True):
             gpi_event_dict['21'].in_cue = True
             pass

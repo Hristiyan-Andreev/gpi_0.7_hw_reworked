@@ -1,4 +1,5 @@
 import json
+# from helpers import setup_logger
 
 WATCHED_FILES = ['config.json']
 LAST_EXIT_FILE = 'last_exit.pkl'
@@ -6,18 +7,15 @@ STATE_FILE = 'gpi_pair_state.pkl'
 
 config_file = 'config.json'
 
+# das_logger = setup_logger()
 try:
 	with open(config_file) as cf_file:
 		config_dict = json.load(cf_file)
 except FileExistsError or FileNotFoundError:
-	print('Nema config.json file, losho.')
-# Configuration parameters - IPs, Inputs, Stream IDs
+	# das_logger.error('Nema config.json file, losho.')
+	print('Nema config deistvaite!')
 
-	# Set elemental_ip 
 elemental_ip = config_dict['elemental_ip']
-
-# Mapper of GPI inputs to Elemental live streams
-	# Example - We want GPI signal on pin 21 to trigger Ad Avail on Stream with ID = 5
-	# 21: '5'
-	# All must be seperated by commas
 gpi2stream = config_dict['gpi_to_event']
+min_av_enbl = config_dict['min_avail_enabled']
+min_av_dur = config_dict['min_avail_duration']
