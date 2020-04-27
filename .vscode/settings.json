@@ -1,5 +1,5 @@
 {
-    "python.pythonPath": "C:\\Users\\Chris\\.platformio\\penv\\Scripts\\python.exe",
+    "python.pythonPath": "C:\\Users\\Chris\\.virtualenvs\\cmder-9WRTu3cO\\Scripts\\python.exe",
     "workbench.preferredDarkColorTheme": "Material Theme High Contrast",
     "workbench.colorTheme": "Material Theme Darker High Contrast",
     "terminal.integrated.fontSize": 15,
