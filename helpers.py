@@ -8,12 +8,6 @@ import os
 import logging as log
 
 
-# datetime object containing current date and time
-now = dt.now()
-# dd/mm/YY H:M:S
-dt_string = now.strftime("%d-%m-%Y %H:%M:%S")
-
-
 # Time measurement class
 class TimeMeasure():
     start_time = 0
@@ -33,26 +27,5 @@ class TimeMeasure():
         print('{}: {}'.format(msg,str(self.end_time)))
         # print(msg + str(self.end_time))
 
-def setup_logger(filename = None):
-    path = os.path.join('/','var','log')
-    if filename:
-        full_filename = '{}/{}'.format(path,'{}_{}.log'.format(filename,dt_string))
-    else:
-        full_filename = '{}/{}'.format(path,'main_{}.log'.format(dt_string))
 
-    file_handler = log.FileHandler(full_filename)
-    file_handler.setLevel(log.DEBUG)
-    file_format = log.Formatter('%(asctime)s - %(threadName)s - %(levelname)s - %(message)s')
-    file_handler.setFormatter(file_format)
 
-    console_handler = log.StreamHandler()
-    console_handler.setLevel(log.DEBUG)
-    console_format = log.Formatter('%(asctime)s - %(threadName)s - %(levelname)s - %(message)s')
-    console_handler.setFormatter(console_format)
-
-    logger = log.getLogger(__name__)
-    logger.addHandler(file_handler)
-    logger.addHandler(console_handler)
-    logger.setLevel(log.DEBUG)
-
-    return logger

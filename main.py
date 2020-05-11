@@ -8,12 +8,13 @@ import elemental_api_class as liveapi
 from s_av_ctrl import StreamAvailController as StreamAvailCtrl
 from reloader import Reloader
 from state_manager import StateManager
-from helpers import setup_logger
+# from helpers import setup_logger
 # sys.path.append('/home/pi/config')
+import loggers as lg
 import config as cf
 
 
-main_log = setup_logger()
+main_log = lg.setup_logger('main')
 main_log.info('Starting Ad Avail Controller ver. 0.7')
 stater = StateManager(cf.LAST_EXIT_FILE, cf.STATE_FILE)
 
@@ -35,6 +36,7 @@ def check_elemental_connection():
 gpi_event_dict = {}
 if stater.is_last_exit_from_reload() is True:
     gpi_cue_state = stater.load_gpi_state()
+    main_log.info('Last exit: Reload')
     
     for gpi, id in cf.gpi2stream.items():
         gpi_event_dict[gpi] = StreamAvailCtrl(gpi, id, cf.elemental_ip,\

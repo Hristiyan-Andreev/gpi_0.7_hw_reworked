@@ -12,21 +12,34 @@ import subprocess as subp
 # def check_status_main():
 #     this_pid = os.getpid()
 #     python_pids = get_pid('python3')
-def get_pid(name):
+def get_proc_pid(name):
     return list(map(int,subp.check_output(["pidof", "-c", name]).split()))
+
+def get_arg_pid(argument):
+   return list(map(int,subp.check_output(["pgrep", "-f", argument]).split()))
+
+def is_main_running():
+    #Check if main program is running
+    
+    python_pids = get_proc_pid('python3')
+    try:
+        main_py_pids = get_arg_pid('main.py')
+    except Exception as e:
+        print(e)
 
 
 #-- Test pgrep
-this_pid = os.getpid()
-print(this_pid)
+# this_pid = os.getpid()
+# print(this_pid)
 
-python_pids = get_pid('python3')
-main_py_pids = list(map(int,subp.check_output(["pgrep", "-f", "main.py"]).split()))
-print(python_pids)
-print(main_py_pids)
+# print(python_pids)
+# print(main_py_pids)
 
-python_main_py_pid = set(python_pids).intersection(main_py_pids)
-print(python_main_py_pid)
+# python_main_py_pid = set(python_pids).intersection(main_py_pids)
+# print(python_main_py_pid)
+
+is_main_running()
+
 
 while(True):
     pass

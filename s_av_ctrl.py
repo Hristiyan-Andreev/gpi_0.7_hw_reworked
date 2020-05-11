@@ -1,5 +1,5 @@
 import threading as td
-# import RPi.GPIO as GPIO
+import RPi.GPIO as GPIO
 import datetime as dt
 import time
 

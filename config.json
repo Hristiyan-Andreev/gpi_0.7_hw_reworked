@@ -3,8 +3,8 @@
     "elemental_user": "user",
     "elemental_pass": "pass",
     "gpi_to_event": {
-        "21": "5",
-        "12": "3"
+        "21": "4",
+        "12": "13"
     },
     "min_avail_enabled": "True",
     "min_avail_duration": 3 

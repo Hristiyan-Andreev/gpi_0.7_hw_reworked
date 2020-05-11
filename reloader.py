@@ -4,6 +4,7 @@ from os.path import getmtime
 import threading as th
 import time
 import logging as log
+import loggers as lg
 
 class Reloader(th.Thread):
     def __init__(self, files_to_watch, gpi_event_dict = None, check_interval = 2, linux = True,\
@@ -20,27 +21,28 @@ class Reloader(th.Thread):
         self.check_interval = check_interval
         self.linux = linux
         # self.file = file
-        self.logger = self.setup_logger()
+        self.logger = lg.setup_logger('reload')
         if before_reload:
             self.before_reload_func = before_reload
             self.before_reload_dict = gpi_event_dict
 
-    def setup_logger(self):
-        path = os.path.join('/','var','log')
-        filename = '{}/{}'.format(path,'reloader.log')
+    # def setup_logger(self):
+    #     path = os.path.join('/','var','log')
+    #     filename = '{}/{}'.format(path,'reloader.log')
 
-        file_handler = log.FileHandler(filename)
-        file_handler.setLevel(log.DEBUG)
-        file_format = log.Formatter('%(asctime)s - %(threadName)s - %(levelname)s - %(message)s')
-        file_handler.setFormatter(file_format)
+    #     file_handler = log.FileHandler(filename)
+    #     file_handler.setLevel(log.DEBUG)
+    #     file_format = log.Formatter('%(asctime)s - %(threadName)s - %(levelname)s - %(message)s')
+    #     file_handler.setFormatter(file_format)
 
-        logger = log.getLogger(__name__)
-        logger.addHandler(file_handler)
-        logger.setLevel(log.DEBUG)
+    #     logger = log.getLogger(__name__)
+    #     logger.addHandler(file_handler)
+    #     logger.setLevel(log.DEBUG)
 
-        return logger
+    #     return logger
 
     def run(self):
+        self.logger.info('Reloader running')
         while True:
             time.sleep(self.check_interval)
             # Check whether a watched file has changed.
