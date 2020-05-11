@@ -14,7 +14,7 @@ import loggers as lg
 import config as cf
 
 
-main_log = lg.setup_logger('main')
+main_log = lg.setup_logger('main_logger','main')
 main_log.info('Starting Ad Avail Controller ver. 0.7')
 stater = StateManager(cf.LAST_EXIT_FILE, cf.STATE_FILE)
 

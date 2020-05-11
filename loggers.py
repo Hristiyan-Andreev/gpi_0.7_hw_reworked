@@ -27,16 +27,18 @@ def get_formatted_s_handler():
     return console_handler
 
 
-def setup_logger(filename = None):
+def setup_logger(name, filename = None):
     dt_string = get_timestamp()
     path = os.path.join('/','var','log')
+
     if filename:
         full_filename = '{}/{}'.format(path,'{}_{}.log'.format(filename,dt_string))
         file_handler = get_formatted_f_handler(full_filename)
+   
 
     console_handler = get_formatted_s_handler()
 
-    logger = log.getLogger(__name__)
+    logger = log.getLogger(name)
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
     logger.setLevel(log.DEBUG)
