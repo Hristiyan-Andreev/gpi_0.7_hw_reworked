@@ -44,7 +44,7 @@ class StreamAvailController:
     def start_cue(self):
         if self.stream_locked:
             return 1
-        response = self.elemental_api.start_cue(self.stream_id)
+        response = self.elemental_api.start_cue(self.event_id)
         self.in_cue = True
         self.lock_stream()
         print("3. Starting cue")
@@ -54,7 +54,7 @@ class StreamAvailController:
     def stop_cue(self):
         if self.stream_locked:
             return 1
-        response = self.elemental_api.stop_cue(self.stream_id)
+        response = self.elemental_api.stop_cue(self.event_id)
         self.in_cue = False
         self.lock_stream()
         print("3. Stopping cue")
