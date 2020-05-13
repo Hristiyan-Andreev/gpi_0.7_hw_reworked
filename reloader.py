@@ -26,26 +26,7 @@ class Reloader(th.Thread):
             self.before_reload_func = before_reload
             self.before_reload_dict = gpi_event_dict
 
-    # def setup_logger(self):
-    #     path = os.path.join('/','var','log')
-    #     filename = '{}/{}'.format(path,'reloader.log')
-
-    #     file_format = log.Formatter('%(asctime)s - %(threadName)s - %(levelname)s - %(message)s')
-    #     file_handler = log.FileHandler(filename)
-    #     file_handler.setLevel(log.DEBUG)
-    #     file_handler.setFormatter(file_format)
-
-    #     console_format = log.Formatter('%(asctime)s - %(threadName)s - %(levelname)s - %(message)s')
-    #     console_handler = log.StreamHandler()
-    #     console_handler.setLevel(log.DEBUG)
-    #     console_handler.setFormatter(console_format)
-
-    #     logger = log.getLogger(__name__)
-    #     logger.addHandler(file_handler)
-    #     logger.setLevel(log.DEBUG)
-
-    #     return logger
-
+    
     def run(self):
         self.logger.info('Reloader running')
         while True:

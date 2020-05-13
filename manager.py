@@ -1,4 +1,5 @@
 import os
+import sys
 import subprocess as subp
 import loggers as lg
 import time
@@ -51,8 +52,10 @@ def is_avail_main_running():
         main_file_found = True
     
     if main_file_found is True:
-        python_main_py_pid = set(python_pids).intersection(main_py_pids).pop()
+        python_main_py_pid = set(python_pids).intersection(main_py_pids)
+        
         if python_main_py_pid:
+            python_main_py_pid = python_main_py_pid.pop()
             control_log.info("{} pid is {}".format(AVAIL_MAIN_FILE, python_main_py_pid))
             return True
         else:
@@ -67,9 +70,13 @@ def start_avail_script():
         control_log.info('Ad avail script {} is already running'.format(AVAIL_MAIN_FILE))
         return 1
     
-    # process = subp.Popen(['python3',AVAIL_MAIN_FILE], stdout=subp.PIPE)
-    # subp.check_output(["python3", AVAIL_MAIN_FILE])
-    control_log.info('Ad avail {} started with PID: {}'.format(AVAIL_MAIN_FILE, process.pid))
+    # process = subp.Popen(['python3',AVAIL_MAIN_FILE, '&'], stdout=subp.PIPE)
+    # subp.check_output(["python3", AVAIL_MAIN_FILE, '&'])
+    # control_log.info('Ad avail {} started with PID: {}'.format(AVAIL_MAIN_FILE, process.pid))
+
+    # print(sys.executable)
+    os.execl(sys.executable, sys.executable, 'main.py')
+    # control_log.info('Ad avail {} started with PID: {}'.format(AVAIL_MAIN_FILE))
     
 
 def stop_avail_script():
@@ -81,16 +88,17 @@ def stop_avail_script():
 
     main_proc_pid = get_main_proc_pid()
     subp.check_output(["kill", str(main_proc_pid)])
+    
 
     control_log.info('Ad avail script {} with PID: {} was terminated'.format(AVAIL_MAIN_FILE, main_proc_pid))
 
 
 # is_avail_main_running()
-# inp = input("Start the bloody program!")
-# start_avail_script()
+inp = input("Start the bloody program!")
+start_avail_script()
 
-inp = input("Stop the bloody program!")
-stop_avail_script()
+# inp = input("Stop the bloody program!")
+# stop_avail_script()
 
 
 
