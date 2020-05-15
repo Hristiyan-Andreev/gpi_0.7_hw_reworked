@@ -53,7 +53,7 @@ def is_avail_main_running():
     
     if main_file_found is True:
         python_main_py_pid = set(python_pids).intersection(main_py_pids)
-        
+
         if python_main_py_pid:
             python_main_py_pid = python_main_py_pid.pop()
             control_log.info("{} pid is {}".format(AVAIL_MAIN_FILE, python_main_py_pid))
@@ -71,11 +71,13 @@ def start_avail_script():
         return 1
     
     # process = subp.Popen(['python3',AVAIL_MAIN_FILE, '&'], stdout=subp.PIPE)
+    # process = subp.Popen(['run.sh'], stdout=subp.PIPE)
     # subp.check_output(["python3", AVAIL_MAIN_FILE, '&'])
     # control_log.info('Ad avail {} started with PID: {}'.format(AVAIL_MAIN_FILE, process.pid))
 
     # print(sys.executable)
-    os.execl(sys.executable, sys.executable, 'main.py')
+    # os.execl(sys.executable, sys.executable, 'main.py')
+    os.system('sh run.sh')
     # control_log.info('Ad avail {} started with PID: {}'.format(AVAIL_MAIN_FILE))
     
 
@@ -94,11 +96,11 @@ def stop_avail_script():
 
 
 # is_avail_main_running()
-inp = input("Start the bloody program!")
-start_avail_script()
+# inp = input("Start the bloody program!")
+# start_avail_script()
 
-# inp = input("Stop the bloody program!")
-# stop_avail_script()
+inp = input("Stop the bloody program!")
+stop_avail_script()
 
 
 
