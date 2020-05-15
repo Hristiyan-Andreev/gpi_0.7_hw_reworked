@@ -3,20 +3,15 @@ import sys
 import subprocess as subp
 import loggers as lg
 import time
-
+import click as cl
 AVAIL_MAIN_FILE = 'main.py'
-# import click as cl
 # import PyInquirer as pyq
 
-# TODO: Master script to 
-# 1) start/stop/restart the main.py
+# TODO: Master script to
 # 2) enable/disable autostart
 # 3) Show output and logs
 # 4) monitor (health check) the main script
 
-# def check_status_main():
-#     this_pid = os.getpid()
-#     python_pids = get_pid('python3')
 control_log = lg.setup_logger('control_log', 'controller')
 
 def get_proc_pid(name):
@@ -63,7 +58,7 @@ def is_avail_main_running():
             return False
 
 def start_avail_script():
-    #Check if the program is running
+    #Start the main avail script
     is_running = is_avail_main_running()
     
     if is_running is True:
@@ -94,6 +89,9 @@ def stop_avail_script():
 
     control_log.info('Ad avail script {} with PID: {} was terminated'.format(AVAIL_MAIN_FILE, main_proc_pid))
 
+def restart_avail_script():
+    stop_avail_script()
+    start_avail_script()
 
 # is_avail_main_running()
 # inp = input("Start the bloody program!")
