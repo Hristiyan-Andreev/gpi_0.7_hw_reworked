@@ -4,6 +4,7 @@ import subprocess as subp
 import loggers as lg
 import time
 import click as cl
+from os.path import getmtime
 
 
 AVAIL_MAIN_FILE = 'main.py'
@@ -92,12 +93,20 @@ def restart_avail_script():
 
 def read_main_log():
     main_log_file = lg.get_logger_fname('main')
+    last_save_time = getmtime(main_log_file)
+    with open(main_log_file) as log_file:
+                print(log_file.read())
+
     while(True):
-        with open(main_log_file) as log_file:
-            log_file.read()
+        save_time = getmtime(main_log_file)
+
+        if last_save_time != save_time:
+            print("Change detected")
+            with open(main_log_file) as log_file:
+                print(log_file.read())
+            last_save_time = save_time
+            
         time.sleep(1)
-
-
 # inp = input("Start the bloody program!")
 # start_avail_script()
 
