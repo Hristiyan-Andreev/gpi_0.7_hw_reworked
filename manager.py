@@ -95,27 +95,42 @@ def read_main_log():
     main_log_file = lg.get_logger_fname('main')
     last_save_time = getmtime(main_log_file)
     with open(main_log_file) as log_file:
-                print(log_file.read())
+        lines = log_file.readlines()
+        for line in lines:
+            print(line, end=" ")
+        line_count = len(lines)
+
 
     while(True):
         save_time = getmtime(main_log_file)
 
         if last_save_time != save_time:
-            print("Change detected")
             with open(main_log_file) as log_file:
-                print(log_file.read())
+                lines = log_file.readlines()
+            new_lines = lines[line_count:]
+            for line in new_lines:
+                print(line, end=" ")
+
+            line_count = len(lines)
             last_save_time = save_time
-            
         time.sleep(1)
+
+# def read_main_stdout():
+#      subp.check_output(["strace", 'p{}'.format(get_main_proc_pid()), 's9999', '-e', 'write'])
+
+    # strace -p1234 -s9999 -e write
+
+
+
+
 # inp = input("Start the bloody program!")
 # start_avail_script()
 
 # inp = input("Stop the bloody program!")
 # stop_avail_script()
 
-# inp = input("Read logging file")
+inp = input("Read logging file")
 read_main_log()
-
 
 while(True):
     print('Running')
