@@ -3,7 +3,6 @@ import sys
 from os.path import getmtime
 import threading as th
 import time
-import logging as log
 import loggers as lg
 
 class Reloader(th.Thread):
