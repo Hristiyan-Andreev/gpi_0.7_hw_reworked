@@ -21,7 +21,7 @@ class Reloader(th.Thread):
         self.check_interval = check_interval
         self.linux = linux
         # self.file = file
-        self.logger = lg.setup_logger('reload_log','reloader')
+        self.logger = lg.get_reload_logger()
         if before_reload:
             self.before_reload_func = before_reload
             self.before_reload_dict = gpi_event_dict

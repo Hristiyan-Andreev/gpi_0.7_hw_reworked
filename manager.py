@@ -4,6 +4,8 @@ import subprocess as subp
 import loggers as lg
 import time
 import click as cl
+
+
 AVAIL_MAIN_FILE = 'main.py'
 # import PyInquirer as pyq
 
@@ -57,6 +59,7 @@ def is_avail_main_running():
             control_log.info('{} python process is not running'.format(AVAIL_MAIN_FILE))
             return False
 
+
 def start_avail_script():
     #Start the main avail script
     is_running = is_avail_main_running()
@@ -65,15 +68,7 @@ def start_avail_script():
         control_log.info('Ad avail script {} is already running'.format(AVAIL_MAIN_FILE))
         return 1
     
-    # process = subp.Popen(['python3',AVAIL_MAIN_FILE, '&'], stdout=subp.PIPE)
-    # process = subp.Popen(['run.sh'], stdout=subp.PIPE)
-    # subp.check_output(["python3", AVAIL_MAIN_FILE, '&'])
-    # control_log.info('Ad avail {} started with PID: {}'.format(AVAIL_MAIN_FILE, process.pid))
-
-    # print(sys.executable)
-    # os.execl(sys.executable, sys.executable, 'main.py')
     os.system('sh run.sh')
-    # control_log.info('Ad avail {} started with PID: {}'.format(AVAIL_MAIN_FILE))
     
 
 def stop_avail_script():
@@ -89,17 +84,28 @@ def stop_avail_script():
 
     control_log.info('Ad avail script {} with PID: {} was terminated'.format(AVAIL_MAIN_FILE, main_proc_pid))
 
+
 def restart_avail_script():
     stop_avail_script()
     start_avail_script()
 
-# is_avail_main_running()
+
+def read_main_log():
+    main_log_file = lg.get_logger_fname('main')
+    while(True):
+        with open(main_log_file) as log_file:
+            log_file.read()
+        time.sleep(1)
+
+
 # inp = input("Start the bloody program!")
 # start_avail_script()
 
-inp = input("Stop the bloody program!")
-stop_avail_script()
+# inp = input("Stop the bloody program!")
+# stop_avail_script()
 
+# inp = input("Read logging file")
+read_main_log()
 
 
 while(True):

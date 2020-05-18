@@ -14,7 +14,8 @@ import loggers as lg
 import config as cf
 
 
-main_log = lg.setup_logger('main_logger','main')
+# main_log = lg.setup_logger('main_logger','main')
+main_log = lg.get_main_logger()
 main_log.info('Starting Ad Avail Controller ver. 0.7')
 stater = StateManager(cf.LAST_EXIT_FILE, cf.STATE_FILE)
 
@@ -80,6 +81,6 @@ if __name__ == '__main__':
             gpi_event_dict['21'].in_cue = True
             pass
     except KeyboardInterrupt:
-        main_log.info('Exiting on keyboard interrupt')
+        main_log.info('Exiting on keyboard interrupt\n')
         stater.save_last_exit(last_exit_state='Exit')
         pass

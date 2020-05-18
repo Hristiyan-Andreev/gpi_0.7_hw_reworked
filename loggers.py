@@ -3,9 +3,9 @@ import logging as log
 import os
 
 
-def get_timestamp():
+def get_datestamp():
     now = dt.now()
-    dt_string = now.strftime("%d-%m-%Y %H:%M:%S")
+    dt_string = now.strftime("%d-%m-%Y")
     return dt_string
 
 def get_formatted_f_handler(filename):
@@ -27,12 +27,16 @@ def get_formatted_s_handler():
     return console_handler
 
 
-def setup_logger(name, filename = None):
-    dt_string = get_timestamp()
+def get_logger_fname(filename):
+    dt_string = get_datestamp()
     path = os.path.join('/','var','log')
+    full_filename = '{}/{}'.format(path,'{}_{}.log'.format(filename,dt_string))
+    return full_filename
 
+
+def setup_logger(name, filename = None):
     if filename:
-        full_filename = '{}/{}'.format(path,'{}_{}.log'.format(filename,dt_string))
+        full_filename = get_logger_fname(filename)
         file_handler = get_formatted_f_handler(full_filename)
    
 
@@ -45,3 +49,8 @@ def setup_logger(name, filename = None):
 
     return logger
 
+def get_main_logger():
+    return setup_logger('main_log', 'main')
+
+def get_reload_logger():
+    return setup_logger('reload_log', 'main')
