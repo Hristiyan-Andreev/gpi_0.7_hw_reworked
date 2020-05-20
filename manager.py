@@ -94,7 +94,7 @@ def restart_avail_script():
 def read_main_log():
     main_log_file = lg.get_logger_fname('main')
     last_save_time = getmtime(main_log_file)
-    with open(main_log_file) as log_file:
+    with open(main_log_file, 'r') as log_file:
         lines = log_file.readlines()
         for line in lines:
             print(line, end=" ")
@@ -115,12 +115,17 @@ def read_main_log():
             last_save_time = save_time
         time.sleep(1)
 
-# def read_main_stdout():
-#      subp.check_output(["strace", 'p{}'.format(get_main_proc_pid()), 's9999', '-e', 'write'])
 
-    # strace -p1234 -s9999 -e write
+def enable_avaiL_startup():
+    with open('autostart.sh', 'w') as bash_file:
+        bash_file.seek(0)
+        bash_file.truncate()
+        bash_file.write('python3 {} &'.format(AVAIL_MAIN_FILE))
 
-
+def disable_avail_startup():
+    with open('autostart.sh', 'w') as bash_file:
+        bash_file.seek(0)
+        bash_file.truncate()
 
 
 # inp = input("Start the bloody program!")
@@ -129,15 +134,14 @@ def read_main_log():
 # inp = input("Stop the bloody program!")
 # stop_avail_script()
 
-inp = input("Read logging file")
-read_main_log()
+# inp = input("Read logging file")
+# read_main_log()
+
+inp = input("Enable autostart")
+enable_avaiL_startup()
 
 while(True):
     print('Running')
     time.sleep(5)
     pass
 
-# -- Start the main program from this process -- 
-# inp = input("Start the bloody program!")
-# process = subp.Popen(['python3','main.py'], stdout=subp.PIPE)
-# print(process.communicate())
