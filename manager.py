@@ -122,10 +122,15 @@ def enable_avaiL_startup():
         bash_file.truncate()
         bash_file.write('python3 {} &'.format(AVAIL_MAIN_FILE))
 
+    control_log.info('Main avail script autostart enabled')
+
 def disable_avail_startup():
     with open('autostart.sh', 'w') as bash_file:
         bash_file.seek(0)
         bash_file.truncate()
+
+    control_log.info('Main avail script autostart disabled')
+
 
 
 # inp = input("Start the bloody program!")
