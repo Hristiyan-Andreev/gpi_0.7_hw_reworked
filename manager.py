@@ -5,7 +5,7 @@ import loggers as lg
 import time
 import click as cl
 from os.path import getmtime
-import pyinquirer as pyq
+import PyInquirer as pyq
 
 
 AVAIL_MAIN_FILE = 'main.py'
@@ -121,6 +121,8 @@ def enable_avaiL_startup():
     with open('autostart.sh', 'w') as bash_file:
         bash_file.seek(0)
         bash_file.truncate()
+        bash_file.write('#!/bin/sh\n')
+        bash_file.write('cd /Projects/gpi_0.7_hw_reworked/\n')
         bash_file.write('python3 {} &'.format(AVAIL_MAIN_FILE))
 
     control_log.info('Main avail script autostart enabled')
