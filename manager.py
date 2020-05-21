@@ -5,6 +5,7 @@ import loggers as lg
 import time
 import click as cl
 from os.path import getmtime
+import pyinquirer as pyq
 
 
 AVAIL_MAIN_FILE = 'main.py'
@@ -144,6 +145,9 @@ def disable_avail_startup():
 
 inp = input("Enable autostart")
 enable_avaiL_startup()
+
+# inp = input("Disable autostart")
+# disable_avail_startup()
 
 while(True):
     print('Running')
