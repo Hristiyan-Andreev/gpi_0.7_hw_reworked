@@ -12,9 +12,32 @@ AVAIL_MAIN_FILE = 'main.py'
 # import PyInquirer as pyq
 
 # TODO: Master script to
-# 2) enable/disable autostart
-# 3) Show output and logs
 # 4) monitor (health check) the main script
+# 5) Menu
+
+# Used universally through the program as "back one step" flag
+EXIT_FLAG = 123
+
+# Dicts of menu options - to avoid using strings in the whole program
+mm_choices = {
+    'ss_script': 'Start/Stop/Restart main avail script',
+    'en_dis_auto': 'Enable/Disable autostart',
+    'show_log': 'Show current log',
+    'back': 'Exit the program'
+}
+
+ss_options = {
+    'start': 'Start the main avail script',
+    'stop': 'Stop the main avail script',
+    'restart': 'Restart the script',
+    'back': 'Back to main menu'
+}
+
+autostart_options = {
+    'enable': 'Enable main script autostart',
+    'disable': 'Disable main scritp autostart',
+    'back': 'Back to main menu'
+}
 
 control_log = lg.setup_logger('control_log', 'controller')
 
@@ -71,6 +94,8 @@ def start_avail_script():
         return 1
     
     os.system('sh run.sh')
+
+    return
     
 
 def stop_avail_script():
@@ -86,15 +111,21 @@ def stop_avail_script():
 
     control_log.info('Ad avail script {} with PID: {} was terminated'.format(AVAIL_MAIN_FILE, main_proc_pid))
 
+    return 0
+
 
 def restart_avail_script():
     stop_avail_script()
     start_avail_script()
 
+    return 0
+
 
 def read_main_log():
     main_log_file = lg.get_logger_fname('main')
     last_save_time = getmtime(main_log_file)
+    print('\nPress CTRL+C to Exit')
+    time.sleep(3)
     with open(main_log_file, 'r') as log_file:
         lines = log_file.readlines()
         for line in lines:
@@ -103,18 +134,23 @@ def read_main_log():
 
 
     while(True):
-        save_time = getmtime(main_log_file)
+        try:
+            save_time = getmtime(main_log_file)
 
-        if last_save_time != save_time:
-            with open(main_log_file) as log_file:
-                lines = log_file.readlines()
-            new_lines = lines[line_count:]
-            for line in new_lines:
-                print(line, end=" ")
+            if last_save_time != save_time:
+                with open(main_log_file) as log_file:
+                    lines = log_file.readlines()
+                new_lines = lines[line_count:]
+                for line in new_lines:
+                    print(line, end=" ")
 
-            line_count = len(lines)
-            last_save_time = save_time
-        time.sleep(1)
+                line_count = len(lines)
+                last_save_time = save_time
+            time.sleep(1)
+        except KeyboardInterrupt as e:
+            break
+    
+    return 0
 
 
 def enable_avaiL_startup():
@@ -127,13 +163,89 @@ def enable_avaiL_startup():
 
     control_log.info('Main avail script autostart enabled')
 
+    return 0
+
+
 def disable_avail_startup():
     with open('autostart.sh', 'w') as bash_file:
         bash_file.seek(0)
         bash_file.truncate()
 
     control_log.info('Main avail script autostart disabled')
+    return 0
 
+# ------ Menu functions --------------------------------
+def main_menu():
+    main_menu_promt = {
+        'type': 'list',
+        'name': 'main_choice',
+        'message': 'Choose an option\n',
+        'choices': [v for k,v in mm_choices.items()]
+    }
+
+
+    while(True):
+        print('\n')
+        mm_answers = pyq.prompt(main_menu_promt)
+
+        if mm_answers['main_choice'] is mm_choices['back']:
+            break
+        
+        elif mm_answers['main_choice'] is mm_choices['ss_script']:
+            ss_menu()
+
+        elif mm_answers['main_choice'] is mm_choices['en_dis_auto']:
+            autostart_menu()
+
+        elif mm_answers['main_choice'] is mm_choices['show_log']:
+            read_main_log()
+
+
+def ss_menu():
+    ss_menu_promt = {
+        'type': 'list',
+        'name': 'start_stop',
+        'message': '\nChoose an option\n',
+        'choices': [v for k,v in ss_options.items()]
+    }
+
+    while (True):
+        print('\n')
+        ss_answers = pyq.prompt(ss_menu_promt)
+
+        if ss_answers['start_stop'] is ss_options['back']:
+            break
+
+        elif ss_answers['start_stop'] is ss_options['start']:
+            start_avail_script()
+
+        elif ss_answers['start_stop'] is ss_options['stop']:
+            stop_avail_script()
+
+        elif ss_answers['start_stop'] is ss_options['restart']:
+            restart_avail_script()
+
+
+def autostart_menu():
+    autostart_menu_promt = {
+        'type': 'list',
+        'name': 'enable_disable',
+        'message': '\nChoose an option\n',
+        'choices': [v for k,v in autostart_options.items()]
+    }
+
+    while (True):
+        print('\n')
+        autostart_answers = pyq.prompt(autostart_menu_promt)
+
+        if autostart_answers['enable_disable'] is autostart_options['back']:
+            break
+
+        elif autostart_answers['enable_disable'] is autostart_options['enable']:
+            enable_avaiL_startup()
+
+        elif autostart_answers['enable_disable'] is autostart_options['disable']:
+            disable_avail_startup()
 
 
 # inp = input("Start the bloody program!")
@@ -145,14 +257,16 @@ def disable_avail_startup():
 # inp = input("Read logging file")
 # read_main_log()
 
-inp = input("Enable autostart")
-enable_avaiL_startup()
+# inp = input("Enable autostart")
+# enable_avaiL_startup()
 
 # inp = input("Disable autostart")
 # disable_avail_startup()
 
-while(True):
-    print('Running')
-    time.sleep(5)
-    pass
+try:
+    main_menu()
+except KeyboardInterrupt:
+    print('Will miss you')
+finally:
+    print('We are done!')
 
