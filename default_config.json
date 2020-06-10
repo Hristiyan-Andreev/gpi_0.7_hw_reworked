@@ -1,5 +1,5 @@
 {
-    "elemental_ip": "192.168.2.27",
+    "elemental_ip": "192.168.2.20",
     "elemental_user": "user",
     "elemental_pass": "pass",
     "gpi_to_event": {

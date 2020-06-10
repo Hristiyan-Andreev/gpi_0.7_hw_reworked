@@ -7,6 +7,7 @@ import time
 from os.path import getmtime
 import numpy as np
 import PyInquirer as pyq
+import cli
 
 
 AVAIL_MAIN_FILE = 'main.py'
@@ -24,6 +25,7 @@ mm_choices = {
     'ss_script': 'Start/Stop/Restart main avail script',
     'en_dis_auto': 'Enable/Disable autostart',
     'show_log': 'Show current log',
+    'config': 'Configure paramaters',
     'back': 'Exit the program'
 }
 
@@ -94,7 +96,8 @@ def start_avail_script():
         control_log.info('Ad avail script {} is already running'.format(AVAIL_MAIN_FILE))
         return 1
     
-    os.system('sh run.sh')
+    # os.system('sh run.sh')
+    os.system('sh /Projects/gpi_0.7_hw_reworked/run.sh')
 
     return
     
@@ -133,7 +136,6 @@ def find_latest_log():
 
 def read_main_log():
     main_log_file = find_latest_log()
-    # main_log_file = lg.get_logger_fname('main')
     last_save_time = getmtime(main_log_file)
     print('\nOpening:{}'.format(main_log_file))
     print('\nPress CTRL+C to Exit')
@@ -211,6 +213,9 @@ def main_menu():
 
         elif mm_answers['main_choice'] is mm_choices['show_log']:
             read_main_log()
+
+        elif mm_answers['main_choice'] is mm_choices['config']:
+            cli.config_menu()
 
 
 def ss_menu():
