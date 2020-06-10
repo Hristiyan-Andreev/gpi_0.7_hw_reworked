@@ -128,15 +128,6 @@ def find_latest_log():
         all_log_files.append(log_file)
 
     latest_log_file = max(all_log_files, key=os.path.getctime)
-
-    # logs_saved_times = [[f, getmtime(f)] for f in all_log_files]
-    # logs_saved_times = np.array(logs_saved_times)
-    # saved_times = logs_saved_times[:,1].astype(float)
-    # print(logs_saved_times)
-    # # saved_times = saved_times.astype(float)
-    # latest_time = str(np.max(saved_times))
-    # where = np.where(logs_saved_times==latest_time)
-    # print("\nlatest time:{}".format(latest_time))
     return(latest_log_file)
 
 
