@@ -265,20 +265,6 @@ def autostart_menu():
             disable_avail_startup()
 
 
-# inp = input("Start the bloody program!")
-# start_avail_script()
-
-# inp = input("Stop the bloody program!")
-# stop_avail_script()
-
-# inp = input("Read logging file")
-# read_main_log()
-
-# inp = input("Enable autostart")
-# enable_avaiL_startup()
-
-# inp = input("Disable autostart")
-# disable_avail_startup()
 
 try:
     main_menu()

@@ -6,9 +6,6 @@ import validators as val
 from config_manager import ConfigManager
 
 
-# Used universally through the program as "back one step" flag
-EXIT_FLAG = 123
-
 # Used to manage configuration files - read, write and changes
 cfg = ConfigManager('config.json', 'default_config.json')
 
