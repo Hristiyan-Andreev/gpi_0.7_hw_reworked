@@ -68,7 +68,7 @@ try:
     GPIO.setmode(GPIO.BCM)
     #Setup GPIOs as inputs with PULL-UP
     for gpi,id in cf.gpi2stream.items():
-        GPIO.setup( int(gpi), GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        GPIO.setup( int(gpi), GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
         # GPIO.setup( int(gpi), GPIO.IN)
         main_log.info('GPIO: {} set up as input'.format(gpi))
 

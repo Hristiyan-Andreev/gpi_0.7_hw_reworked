@@ -117,12 +117,11 @@ class StreamAvailController:
 
         # If stream was locked on entering in an avail (GPIO -> 1)
         if self.in_cue:
-            # If GPIO input is still 1 -> do nothing // If GPIO went to 1 -> stop cue
-            # return 1 if GPIO.input(self.gpi_trigger) else self.stop_cue()
-            pass
+            # If GPIO input is still 1 -> do nothing // If GPIO went to 0 -> stop cue
+            return 0 if GPIO.input(int(self.gpi_trigger)) else self.stop_cue()
           
         # Or stream was locked on exiing from an avail (GPIO -> 0)
         elif not self.in_cue:
             # If GPIO input is still 0 -> do nothing // if GPIO went to 1 -> start cue
-            # return 1 if not GPIO.input(self.gpi_trigger) else self.start_cue()
-            pass
+            return 0 if not GPIO.input(int(self.gpi_trigger)) else self.start_cue()
+
