@@ -169,7 +169,7 @@ def stream_menu():
         stream_answers = pyq.prompt(stream_num_promt)
         num_of_streams = int(stream_answers['gpi_num'])
 
-        gpi_to_stream_map = {}
+        gpi_to_event = {}
         for stream in range(1, num_of_streams+1):
             gpi_promt = [
                 {
@@ -193,9 +193,9 @@ def stream_menu():
             stream_answer = pyq.prompt(stream_promt)
             event_number = stream_answer['stream_{}'.format(stream)]
 
-            gpi_to_stream_map[gpi_pin] = event_number
+            gpi_to_event[gpi_pin] = event_number
         
-        print(gpi_to_stream_map)
+        print(gpi_to_event)
         done_with_streams_promt = [
             {
                 'type': 'list',
@@ -207,7 +207,7 @@ def stream_menu():
         done_answer = pyq.prompt(done_with_streams_promt)
         
         if done_answer['done?'] is 'Yes, Save & Exit':
-            cfg.NEW_CONFIG['gpi_to_stream_map'] = gpi_to_stream_map
+            cfg.NEW_CONFIG['gpi_to_event'] = gpi_to_event
             break
         
 
