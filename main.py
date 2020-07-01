@@ -56,7 +56,6 @@ try:
 
 
     main_log.info('State loaded')
-    main_log.info(gpi_event_dict['12'])
     # Set-up reloader on file changes
 
     reload_thread = Reloader(cf.WATCHED_FILES, linux=True,\
@@ -69,8 +68,9 @@ try:
     GPIO.setmode(GPIO.BCM)
     #Setup GPIOs as inputs with PULL-UP
     for gpi,id in cf.gpi2stream.items():
-        print(gpi)
         GPIO.setup( int(gpi), GPIO.IN, pull_up_down=GPIO.PUD_UP)
+        # GPIO.setup( int(gpi), GPIO.IN)
+        main_log.info('GPIO: {} set up as input'.format(gpi))
 
     # Tie callbacks to events
 
